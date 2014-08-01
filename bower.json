@@ -1,0 +1,25 @@
+{
+  "name": "rebound-js",
+  "version": "0.0.4",
+  "homepage": "https://github.com/facebook/rebound-js",
+  "authors": [
+    "Will Bailey <will.bailey@gmail.com>"
+  ],
+  "description": "A simple library for modeling spring dynamics",
+  "main": "rebound.min.js",
+  "keywords": [
+    "animation"
+  ],
+  "license": "2-clause BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "moduleType": [
+    "globals",
+    "node"
+  ]
+}
