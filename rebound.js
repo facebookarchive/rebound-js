@@ -126,15 +126,14 @@
   // **SpringSystem** is a set of Springs that all run on the same physics
   // timing loop. To get started with a Rebound animation you first
   // create a new SpringSystem and then add springs to it.
-  var SpringSystem = rebound.SpringSystem = function SpringSystem() {
+  var SpringSystem = rebound.SpringSystem = function SpringSystem(looper) {
     this._springRegistry = {};
     this._activeSprings = [];
-    this._listeners = [];
+    this.listeners = [];
     this._idleSpringIndices = [];
-    this._boundFrameCallback = bind(this._frameCallback, this);
+    this.looper = looper || new AnimationLooper();
+    this.looper.springSystem = this;
   };
-
-  extend(SpringSystem, {});
 
   extend(SpringSystem.prototype, {
 
@@ -146,15 +145,19 @@
 
     _activeSprings: null,
 
-    _listeners: null,
+    listeners: null,
 
     _idleSpringIndices: null,
 
-    _frameCallback: function() {
-      this.loop();
+    // A SpringSystem is iterated by a looper. The looper is responsible
+    // for executing each frame as the SpringSystem is resolved to idle.
+    // There are three types of Loopers described below AnimationLooper,
+    // SimulationLooper, and SteppingSimulationLooper. AnimationLooper is
+    // the default as it is the most useful for common UI animations.
+    setLooper: function(looper) {
+      this.looper = looper
+      looper.springSystem = this;
     },
-
-    _frameCallbackId: null,
 
     // Create and register a new spring with the SpringSystem. This
     // Spring will now be solved for during the physics iteration loop. By default
@@ -190,7 +193,13 @@
     // Get a listing of all the springs registered with this
     // SpringSystem.
     getAllSprings: function() {
-      return Object.values(this._springRegistry);
+      var vals = [];
+      for (var id in this._springRegistry) {
+        if (this._springRegistry.hasOwnProperty(id)) {
+          vals.push(this._springRegistry[id]);
+        }
+      }
+      return vals;
     },
 
     // registerSpring is called automatically as soon as you create
@@ -239,18 +248,17 @@
     // SpringSystem. This gives you an opportunity to run any post
     // integration constraints or adjustments on the Springs in the
     // SpringSystem.
-    loop: function() {
+    loop: function(currentTimeMillis) {
       var listener;
-      var currentTimeMillis = Date.now();
       if (this._lastTimeMillis === -1) {
         this._lastTimeMillis = currentTimeMillis -1;
       }
       var ellapsedMillis = currentTimeMillis - this._lastTimeMillis;
       this._lastTimeMillis = currentTimeMillis;
 
-      var i = 0, len = this._listeners.length;
+      var i = 0, len = this.listeners.length;
       for (i = 0; i < len; i++) {
-        var listener = this._listeners[i];
+        var listener = this.listeners[i];
         listener.onBeforeIntegrate && listener.onBeforeIntegrate(this);
       }
 
@@ -261,14 +269,12 @@
       }
 
       for (i = 0; i < len; i++) {
-        var listener = this._listeners[i];
+        var listener = this.listeners[i];
         listener.onAfterIntegrate && listener.onAfterIntegrate(this);
       }
 
-      compatCancelAnimationFrame(this._frameCallbackId);
       if (!this._isIdle) {
-        this._frameCallbackId =
-          compatRequestAnimationFrame(this._boundFrameCallback);
+        this.looper.run();
       }
     },
 
@@ -282,9 +288,7 @@
       }
       if (this.getIsIdle()) {
         this._isIdle = false;
-        compatCancelAnimationFrame(this._frameCallbackId);
-        this._frameCallbackId =
-          compatRequestAnimationFrame(this._boundFrameCallback);
+        this.looper.run();
       }
     },
 
@@ -292,17 +296,17 @@
     // before/after integration notifications allowing Springs to be
     // constrained or adjusted.
     addListener: function(listener) {
-      this._listeners.push(listener);
+      this.listeners.push(listener);
     },
 
     // Remove a previously added listener on the SpringSystem.
     removeListener: function(listener) {
-      removeFirst(this._listeners, listener);
+      removeFirst(this.listeners, listener);
     },
 
     // Remove all previously added listeners on the SpringSystem.
     removeAllListeners: function() {
-      this._listeners = [];
+      this.listeners = [];
     }
 
   });
@@ -322,9 +326,9 @@
   // will be notified of the updates providing a way to drive an
   // animation off of the spring's resolution curve.
   var Spring = rebound.Spring = function Spring(springSystem) {
-    this._id = Spring._ID++;
+    this._id = 's' + Spring._ID++;
     this._springSystem = springSystem;
-    this._listeners = [];
+    this.listeners = [];
     this._currentState = new PhysicsState();
     this._previousState = new PhysicsState();
     this._tempState = new PhysicsState();
@@ -363,7 +367,7 @@
 
     _displacementFromRestThreshold: 0.001,
 
-    _listeners: null,
+    listeners: null,
 
     _timeAccumulator: 0,
 
@@ -371,7 +375,7 @@
 
     // Remove a Spring from simulation and clear its listeners.
     destroy: function() {
-      this._listeners = [];
+      this.listeners = [];
       this._springSystem.deregisterSpring(this);
     },
 
@@ -424,8 +428,8 @@
     setCurrentValue: function(currentValue) {
       this._startValue = currentValue;
       this._currentState.position = currentValue;
-      for (var i = 0, len = this._listeners.length; i < len; i++) {
-        var listener = this._listeners[i];
+      for (var i = 0, len = this.listeners.length; i < len; i++) {
+        var listener = this.listeners[i];
         listener.onSpringUpdate && listener.onSpringUpdate(this);
       }
       return this;
@@ -465,8 +469,8 @@
       this._startValue = this.getCurrentValue();
       this._endValue = endValue;
       this._springSystem.activateSpring(this.getId());
-      for (var i = 0, len = this._listeners.length; i < len; i++) {
-        var listener = this._listeners[i];
+      for (var i = 0, len = this.listeners.length; i < len; i++) {
+        var listener = this.listeners[i];
         listener.onSpringEndStateChange && listener.onSpringEndStateChange(this);
       }
       return this;
@@ -642,8 +646,8 @@
         notifyAtRest = true;
       }
 
-      for (var i = 0, len = this._listeners.length; i < len; i++) {
-        var listener = this._listeners[i];
+      for (var i = 0, len = this.listeners.length; i < len; i++) {
+        var listener = this.listeners[i];
         if (notifyActivate) {
           listener.onSpringActivate && listener.onSpringActivate(this);
         }
@@ -697,18 +701,22 @@
         alpha + this._previousState.velocity * (1 - alpha);
     },
 
+    getListeners: function() {
+      return this.listeners;
+    },
+
     addListener: function(newListener) {
-      this._listeners.push(newListener);
+      this.listeners.push(newListener);
       return this;
     },
 
     removeListener: function(listenerToRemove) {
-      removeFirst(this._listeners, listenerToRemove);
+      removeFirst(this.listeners, listenerToRemove);
       return this;
     },
 
     removeAllListeners: function() {
-      this._listeners = [];
+      this.listeners = [];
       return this;
     },
 
@@ -742,6 +750,59 @@
       this.tension = tension;
       this.friction = friction;
     };
+
+  // Loopers
+  // -------
+  // **AnimationLooper** resolves the SpringSystem on an animation timing loop.
+  var AnimationLooper = rebound.AnimationLooper = function AnimationLooper() {
+    this.springSystem = null;
+    var _run = function() {
+      this.springSystem.loop(Date.now());
+    };
+
+    this.run = function() {
+      compatRequestAnimationFrame(_run);
+    }
+  };
+
+  // **SimulationLooper** resolves the SpringSystem to a resting state in a
+  // blocking loop. This is useful for synchronously generating pre-recorded
+  // animations that can then be played on a timing loop later.
+  var SimulationLooper = rebound.SimulationLooper = function SimulationLooper(timestep) {
+    this.springSystem = null;
+    var time = 0;
+    var running = false;
+    timestep=timestep || 16.667;
+
+    this.run = function() {
+      if (running) {
+        return;
+      }
+      running = true;
+      while(!this.springSystem.getIsIdle()) {
+        this.springSystem.loop(time+=timestep);
+      }
+      running = false;
+    }
+
+
+  };
+
+  // **SteppingSimulationLooper** resolves the SpringSystem one step at a time controlled
+  // by an outside loop. This is useful for testing.
+  var SteppingSimulationLooper = rebound.SteppingSimulationLooper = function(timestep) {
+    this.springSystem = null;
+    var time = 0;
+    var running = false;
+
+    // this.run is NOOP'd here to allow control from the outside using this.step.
+    this.run = function(){};
+
+    // Perform one step toward resolving the SpringSystem.
+    this.step = function(timestep) {
+      this.springSystem.loop(time+=timestep);
+    }
+  }
 
   // Math for converting from
   // [Origami](http://facebook.github.io/origami/) to
@@ -811,12 +872,6 @@
   function removeFirst(array, item) {
     var idx = array.indexOf(item);
     idx != -1 && array.splice(idx, 1);
-  }
-
-  function compatCancelAnimationFrame(id) {
-    return typeof window != 'undefined' &&
-      window.cancelAnimationFrame &&
-      cancelAnimationFrame(id);
   }
 
   // Cross browser/node timer functions.
