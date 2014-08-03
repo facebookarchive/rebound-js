@@ -756,8 +756,9 @@
   // **AnimationLooper** resolves the SpringSystem on an animation timing loop.
   var AnimationLooper = rebound.AnimationLooper = function AnimationLooper() {
     this.springSystem = null;
+    var _this = this;
     var _run = function() {
-      this.springSystem.loop(Date.now());
+      _this.springSystem.loop(Date.now());
     };
 
     this.run = function() {
