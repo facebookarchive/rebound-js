@@ -35,10 +35,13 @@
     }
 
   .exampleContainer {
-    display: flex;
-    display: -webkit-flex;
-    margin: 40px 0px;
+    margin: 40px 0px 60px 0px;
+    position: relative;
   }
+    .exampleContainer#hamburgerButtonExample {
+      display: flex;
+      display: -webkit-flex;
+    }
 
 
   .exampleHeader {

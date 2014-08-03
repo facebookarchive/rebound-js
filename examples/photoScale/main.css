@@ -1,11 +1,8 @@
-.demo_container {
+.inner-content {
   position: relative;
+  width: 610px;
+  margin: auto;
 }
-  .inner-content {
-    position: relative;
-    width: 610px;
-    margin: auto;
-  }
 
 #graph-canvas {
   width: 300px;
@@ -24,7 +21,7 @@
   position: absolute;
   top: 0px;
   left: 0px;
-  background: url(images/landscape.jpg);
+  background: url(landscape.jpg);
 }
 
 .controls {
