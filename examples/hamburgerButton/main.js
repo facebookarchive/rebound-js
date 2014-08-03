@@ -151,18 +151,17 @@
     ex.className = 'example';
     container.appendChild(ex);
     ex.style.backgroundColor = bgColor;
+    ex.style.opacity = 0.75;
+    ex.style.marginTop = (size * -0.1) + 'px';
     new hamburgerButton.HamburgerButton(ex, size, color);
   };
 
   var doit = function() {
     var container = document.getElementById('hamburgerButtonExample');
     createHamburgerButtonExample(container, 200, '#1194e7');
-    createHamburgerButtonExample(container, 100, '#cc0000');
-    createHamburgerButtonExample(container, 50, '#00cc00');
-    createHamburgerButtonExample(container, 25, '#cc00ff');
-    createHamburgerButtonExample(container, 25, '#00ccff');
-    createHamburgerButtonExample(container, 25, '#ffcc00');
-    createHamburgerButtonExample(container, 25, '#ccff00');
+    createHamburgerButtonExample(container, 100, '#00cc00');
+    createHamburgerButtonExample(container, 50, '#cb11e7');
+    createHamburgerButtonExample(container, 25, '#ffd200');
   };
 
   document.addEventListener('DOMContentLoaded', doit);
