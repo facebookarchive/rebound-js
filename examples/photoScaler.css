@@ -1,6 +1,11 @@
 .demo_container {
   position: relative;
 }
+  .inner-content {
+    position: relative;
+    width: 610px;
+    margin: auto;
+  }
 
 #graph-canvas {
   width: 300px;
