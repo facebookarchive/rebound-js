@@ -1,12 +1,12 @@
 {
   "name": "rebound-js",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "homepage": "https://github.com/facebook/rebound-js",
   "authors": [
     "Will Bailey <will.bailey@gmail.com>"
   ],
   "description": "A simple library for modeling spring dynamics",
-  "main": "rebound.min.js",
+  "main": "rebound.js",
   "keywords": [
     "animation"
   ],
