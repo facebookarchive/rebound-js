@@ -861,7 +861,16 @@
       toRangeSize = toHigh - toLow;
       valueScale = (value - fromLow) / fromRangeSize;
       return toLow + (valueScale * toRangeSize);
+    },
+
+    degreesToRadians: function(deg) {
+      return (deg * Math.PI) / 180;
+    },
+
+    radiansToDegrees: function(rad) {
+      return (rad * 180) / Math.PI;
     }
+
   }
 
 
