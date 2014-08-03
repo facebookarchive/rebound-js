@@ -2,11 +2,18 @@
 <html>
 <head>
   <title>Rebound JS</title>
-  <script type="text/javascript" src="../rebound.js"></script>
-  <script type="text/javascript" src="hamburgerButton.js"></script>
-  <script type="text/javascript" src="example.js"></script>
-  <link rel="stylesheet" type="text/css" href="main.css" />
   <link href="http://fonts.googleapis.com/css?family=Droid+Sans+Mono|Roboto:400,300,700" rel="stylesheet" type="text/css">
+
+  <script type="text/javascript" src="../rebound.js"></script>
+
+  <script type="text/javascript" src="util.js"></script>
+  <script type="text/javascript" src="hamburgerButton.js"></script>
+  <script type="text/javascript" src="photoScaleExample.js"></script>
+  <script type="text/javascript" src="example.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="main.css" />
+  <link rel="stylesheet" type="text/css" href="photoScaler.css" />
+
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -19,6 +26,8 @@
         with <a href="http://www.github.com/facebook/rebound-js" target="_blank">rebound-js</a>.
       </div>
     </div>
+
+    <!-- Hamburger Menu -->
     <div class="exampleHeader">
       <h2 class="exampleTitle">Hamburger Button Example</h2>
       <div class="exampleDescription">
@@ -28,7 +37,36 @@
         from a zero to one spring transition and drawn in canvas. Tap/Click on buttons
         to transition between the states. (<a href="https://github.com/facebook/rebound-js/blob/master/examples/hamburgerButton.js" target="_blank">Code</a>)
       </div>
-      <div id="hamburgerButtonExample" class="exampleContainer">
+    </div>
+    <div id="hamburgerButtonExample" class="exampleContainer">
+    </div>
+
+    <br />
+    <!-- Photo Scaler -->
+    <div class="exampleHeader">
+      <h2 class="exampleTitle">Photo Scale Animation</h2>
+      <div class="exampleDescription">
+        This example demonstrates scaling a photo on a Rebound spring animation. You can adjust the
+        tension and friction using the sliders and observe how this changes the curve of the spring
+        animation. The tension and friction values are based on
+        <a href="http://facebook.github.io/origami/">Origami</a>, so you can convert Origami mockups
+        directly into Rebound animations.
+      </div>
+    </div>
+    <div class="demo_container">
+      <canvas id="graph-canvas" width="600" height="600"></canvas>
+      <div id="example-photo" class="photo" onmousedown="this.className='photo down'">
+        <div class="pill">Press and Hold</div>
+      </div>
+      <div class="controls">
+        <div>
+          <label for="tension">tension : <span id="tension_value">40</span></label>
+          <input type="range" id="tension" name="tension" min="1" max="100" value="40" />
+        </div>
+        <div>
+          <label for="friction">friction : <span id="friction_value">3</span></label>
+          <input type="range" id="friction" name="friction" min="1" max="30" value="3" />
+        </div>
       </div>
     </div>
 

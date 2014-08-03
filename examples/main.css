@@ -41,17 +41,21 @@
   }
 
 
-  h2.exampleTitle {
+  .exampleHeader {
+    margin-bottom: 20px;
   }
+    h2.exampleTitle {
+    }
 
-    .exampleDescription {
-      margin-bottom: 10px;
-      font-size: 14px;
-      line-height: 18px;
-    }
-    .example {
-      margin: 10px;
-    }
+      .exampleDescription {
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 18px;
+      }
+
+  .example {
+    margin: 10px;
+  }
 
 @media (-webkit-min-device-pixel-ratio: 2),
 (min--moz-device-pixel-ratio: 2),

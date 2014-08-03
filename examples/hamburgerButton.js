@@ -139,26 +139,6 @@
     }
   });
 
-  // Create a couple of utilities.
-
-  var slice = Array.prototype.slice;
-  var concat = Array.prototype.concat;
-
-  function bind(func, context) {
-    args = slice.call(arguments, 2);
-    return function() {
-      func.apply(context, concat.call(args, slice.call(arguments)));
-    };
-  }
-
-  function extend(target, source) {
-    for (var key in source) {
-      if (source.hasOwnProperty(key)) {
-        target[key] = source[key];
-      }
-    }
-  }
-
   // Export the control.
   if (typeof exports != 'undefined') {
     extend(exports, hb);
