@@ -8,6 +8,10 @@
   <script type="text/javascript" src="util.js"></script>
   <link rel="stylesheet" type="text/css" href="main.css" />
 
+  <!-- cascade effect -->
+  <link rel="stylesheet" type="text/css" href="cascadeEffect/main.css" />
+  <script type="text/javascript" src="cascadeEffect/main.js"></script>
+
   <!-- hamburger button -->
   <script type="text/javascript" src="hamburgerButton/main.js"></script>
 
@@ -28,6 +32,20 @@
         with <a href="http://www.github.com/facebook/rebound-js" target="_blank">rebound-js</a>.
       </div>
     </div>
+
+    <!-- Cascade Effect -->
+    <div class="exampleHeader">
+      <h2 class="exampleTitle">Cascade Effect</h2>
+      <div class="exampleDescription">
+      This example demonstrates a cascade effect generated from a single spring curve.
+      A spring is pre-recorded using the SimulationLooper. Each frame of the spring is
+      played back over a set of frame handlers where each handler trails the next by one
+      frame. When all of the handlers have played all the frames, the animation is over.
+      </div>
+    </div>
+    <div id="cascadeEffectExample" class="exampleContainer">
+    </div>
+
 
     <!-- Hamburger Menu -->
     <div class="exampleHeader">
@@ -54,7 +72,6 @@
         directly into Rebound animations. (<a href="https://github.com/facebook/rebound-js/blob/master/examples/photoScaleExample.js" target="_blank">Code</a>)
       </div>
     </div>
-
     <div class="exampleContainer">
       <div class="inner-content">
         <canvas id="graph-canvas" width="600" height="600"></canvas>

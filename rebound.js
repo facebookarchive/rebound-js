@@ -120,6 +120,26 @@
 
 (function() {
   var rebound = {};
+  var util = rebound.util = {};
+  var concat = Array.prototype.concat;
+  var slice = Array.prototype.slice;
+
+  // Bind a function to a context object.
+  util.bind = function bind(func, context) {
+    args = slice.call(arguments, 2);
+    return function() {
+      func.apply(context, concat.call(args, slice.call(arguments)));
+    };
+  };
+
+  // Add all the properties in the source to the target.
+  util.extend = function extend(target, source) {
+    for (var key in source) {
+      if (source.hasOwnProperty(key)) {
+        target[key] = source[key];
+      }
+    }
+  };
 
   // SpringSystem
   // ------------
@@ -135,7 +155,7 @@
     this.looper.springSystem = this;
   };
 
-  extend(SpringSystem.prototype, {
+  util.extend(SpringSystem.prototype, {
 
     _springRegistry: null,
 
@@ -334,7 +354,7 @@
     this._tempState = new PhysicsState();
   };
 
-  extend(Spring, {
+  util.extend(Spring, {
     _ID: 0,
 
     MAX_DELTA_TIME_SEC: 0.064,
@@ -343,7 +363,7 @@
 
   });
 
-  extend(Spring.prototype, {
+  util.extend(Spring.prototype, {
 
     _id: 0,
 
@@ -734,7 +754,7 @@
   // velocity values.
   var PhysicsState = function PhysicsState() {};
 
-  extend(PhysicsState.prototype, {
+  util.extend(PhysicsState.prototype, {
     position: 0,
     velocity: 0
   });
@@ -762,7 +782,7 @@
     };
 
     this.run = function() {
-      compatRequestAnimationFrame(_run);
+      util.onFrame(_run);
     }
   };
 
@@ -828,7 +848,7 @@
     }
   };
 
-  extend(SpringConfig, {
+  util.extend(SpringConfig, {
     // Convert an origami Spring tension and friction to Rebound spring
     // constants. If you are prototyping a design with Origami, this
     // makes it easy to make your springs behave exactly the same in
@@ -842,7 +862,7 @@
 
   SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
 
-  extend(SpringConfig.prototype, {
+  util.extend(SpringConfig.prototype, {
     friction: 0,
     tension: 0
   });
@@ -885,7 +905,7 @@
   }
 
   // Cross browser/node timer functions.
-  function compatRequestAnimationFrame(func) {
+  util.onFrame = function onFrame(func) {
     var meth;
     if (typeof process != 'undefined') {
       meth = setImmediate;
@@ -897,26 +917,6 @@
         window.oRequestAnimationFrame;
     }
     return meth(func);
-  }
-
-  var concat = Array.prototype.concat;
-  var slice = Array.prototype.slice;
-
-  // Bind a function to a context object.
-  function bind(func, context) {
-    args = slice.call(arguments, 2);
-    return function() {
-      func.apply(context, concat.call(args, slice.call(arguments)));
-    };
-  }
-
-  // Add all the properties in the source to the target.
-  function extend(target, source) {
-    for (var key in source) {
-      if (source.hasOwnProperty(key)) {
-        target[key] = source[key];
-      }
-    }
   }
 
   // Export the public api using exports for common js or the window for
