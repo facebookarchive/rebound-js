@@ -2,7 +2,7 @@
   "name": "rebound",
   "version": "0.0.7",
   "description": "A simple library for modeling spring dynamics",
-  "main": "rebound.min.js",
+  "main": "rebound.js",
   "author": "Facebook",
   "license": "BSD",
   "dependencies": {},
