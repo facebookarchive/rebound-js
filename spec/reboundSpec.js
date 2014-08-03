@@ -27,13 +27,6 @@ describe('SpringSystem', function() {
     expect(springSystem.activateSpring).toHaveBeenCalledWith(spring.getId());
   });
 
-  it('activates when a spring is moved', function() {
-    var spring = springSystem.createSpring();
-    expect(springSystem.getIsIdle()).toBe(true);
-    spring.setEndValue(1);
-    expect(springSystem.activateSpring).toHaveBeenCalledWith(spring.getId());
-  });
-
   it('can have listeners', function() {
     var dummyListener = {};
     springSystem.addListener(dummyListener);
