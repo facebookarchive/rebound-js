@@ -7,12 +7,12 @@ createHamburgerButtonExample = function(container, size, color, bgColor) {
 };
 
 var doit = function() {
-  var container = document.getElementById('hamburgerButton');
+  var container = document.getElementById('hamburgerButtonExample');
   createHamburgerButtonExample(container, 200, '#999');
-  createHamburgerButtonExample(container, 200, '#FFFFFF', '#000');
-  createHamburgerButtonExample(container, 100, '#FF0000');
-  createHamburgerButtonExample(container, 50, '#00FF00');
-  createHamburgerButtonExample(container, 25, '#0000FF');
+  createHamburgerButtonExample(container, 200, '#FFFFFF', '#999');
+  createHamburgerButtonExample(container, 200, '#FF0000');
+  createHamburgerButtonExample(container, 50, '#000');
+  createHamburgerButtonExample(container, 25, '#000');
 };
 
 document.addEventListener('DOMContentLoaded', doit);
