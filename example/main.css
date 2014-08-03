@@ -1,0 +1,31 @@
+.container {
+  padding: 30px;
+  width: 800px;
+  margin: auto;
+}
+
+  h1.pageTitle {
+    font-family: helvetica, sans-serif;
+  }
+
+  .exampleContainer {
+    display: flex;
+    display: -webkit-flex;
+    margin: 40px 0px;
+  }
+
+
+  h2.exampleTitle {
+    font-family: helvetica, sans-serif;
+  }
+
+    .exampleDescription {
+      font-family: helvetica, sans-serif;
+      margin-bottom: 10px;
+      font-size: 14px;
+      line-height: 18px;
+    }
+    .example {
+      margin: 10px;
+      font-family: helvetica, sans-serif;
+    }
