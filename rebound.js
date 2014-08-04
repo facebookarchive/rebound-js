@@ -509,7 +509,11 @@
     // and displacement of the Spring will then govern its motion to
     // return to rest on a natural feeling curve.
     setVelocity: function(velocity) {
+      if (velocity === this._currentState.velocity) {
+        return this;
+      }
       this._currentState.velocity = velocity;
+      this._springSystem.activateSpring(this.getId());
       return this;
     },
 
@@ -561,10 +565,9 @@
     // the direction it was moving in when it started to the current
     // position and end value.
     isOvershooting: function() {
-      return (this._startValue < this._endValue &&
-              this.getCurrentValue() > this._endValue) ||
-             (this._startValue > this._endValue &&
-              this.getCurrentValue() < this._endValue);
+      return this._springConfig.tension > 0 &&
+             ((this._startValue < this._endValue && this.getCurrentValue() > this._endValue) ||
+             (this._startValue > this._endValue && this.getCurrentValue() < this._endValue));
     },
 
     // Spring.advance is the main solver method for the Spring. It takes
@@ -648,8 +651,14 @@
 
       if (this.isAtRest() ||
           this._overshootClampingEnabled && this.isOvershooting()) {
-        this._startValue = this._endValue;
-        this._currentState.position = this._endValue;
+
+        if (this._springConfig.tension > 0) {
+          this._startValue = this._endValue;
+          this._currentState.position = this._endValue;
+        } else {
+          this._endValue = this._currentState.position;
+          this._startValue = this._endValue;
+        }
         this.setVelocity(0);
         isAtRest = true;
       }
@@ -696,11 +705,13 @@
     // Check if the Spring is atRest meaning that it’s currentValue and
     // endValue are the same and that it has no velocity. The previously
     // described thresholds for speed and displacement define the bounds
-    // of this equivalence check.
+    // of this equivalence check. If the Spring has 0 tension, then it will
+    // be considered at rest whenever its absolute velocity drops below the
+    // restSpeedThreshold.
     isAtRest: function() {
       return Math.abs(this._currentState.velocity) < this._restSpeedThreshold &&
-             this.getDisplacementDistanceForState(this._currentState) <=
-               this._displacementFromRestThreshold;
+        (this.getDisplacementDistanceForState(this._currentState) <= this._displacementFromRestThreshold ||
+        this._springConfig.tension === 0);
     },
 
     // Force the spring to be at rest at its current position. As
@@ -773,7 +784,9 @@
 
   // Loopers
   // -------
-  // **AnimationLooper** resolves the SpringSystem on an animation timing loop.
+  // **AnimationLooper** plays each frame of the SpringSystem on animation timing loop.
+  // This is the default type of looper for a new spring system as it is the most common
+  // when developing UI.
   var AnimationLooper = rebound.AnimationLooper = function AnimationLooper() {
     this.springSystem = null;
     var _this = this;
@@ -787,8 +800,11 @@
   };
 
   // **SimulationLooper** resolves the SpringSystem to a resting state in a
-  // blocking loop. This is useful for synchronously generating pre-recorded
-  // animations that can then be played on a timing loop later.
+  // tight and blocking loop. This is useful for synchronously generating pre-recorded
+  // animations that can then be played on a timing loop later. Sometimes this lead to
+  // better performance to pre-record a single spring curve and use it to drive many
+  // animations; however, it can make dynamic response to user input a bit trickier to
+  // implement.
   var SimulationLooper = rebound.SimulationLooper = function SimulationLooper(timestep) {
     this.springSystem = null;
     var time = 0;
@@ -805,12 +821,12 @@
       }
       running = false;
     }
-
-
   };
 
   // **SteppingSimulationLooper** resolves the SpringSystem one step at a time controlled
-  // by an outside loop. This is useful for testing.
+  // by an outside loop. This is useful for testing and verifying the behavior of a SpringSystem
+  // or if you want to control your own timing loop for some reason e.g. slowing down or speeding
+  // up the simulation.
   var SteppingSimulationLooper = rebound.SteppingSimulationLooper = function(timestep) {
     this.springSystem = null;
     var time = 0;
@@ -823,7 +839,7 @@
     this.step = function(timestep) {
       this.springSystem.loop(time+=timestep);
     }
-  }
+  };
 
   // Math for converting from
   // [Origami](http://facebook.github.io/origami/) to
@@ -853,20 +869,25 @@
     // constants. If you are prototyping a design with Origami, this
     // makes it easy to make your springs behave exactly the same in
     // Rebound.
-    fromOrigamiTensionAndFriction: function(oTension, oFriction) {
+    fromOrigamiTensionAndFriction: function(tension, friction) {
       return new SpringConfig(
-        OrigamiValueConverter.tensionFromOrigamiValue(oTension),
-        OrigamiValueConverter.frictionFromOrigamiValue(oFriction));
+        OrigamiValueConverter.tensionFromOrigamiValue(tension),
+        OrigamiValueConverter.frictionFromOrigamiValue(friction));
+    },
+
+    // Create a SpringConfig with no tension or a coasting spring with some amount
+    // of Friction so that it does not coast infininitely.
+    coastingConfigWithOrigamiFriction: function(friction) {
+      return new SpringConfig(0, OrigamiValueConverter.frictionFromOrigamiValue(friction));
     }
   });
 
   SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
 
-  util.extend(SpringConfig.prototype, {
-    friction: 0,
-    tension: 0
-  });
+  util.extend(SpringConfig.prototype, {friction: 0, tension: 0});
 
+  // Here are a couple of function to convert colors between hex codes and RGB
+  // component values. These are handy when performing color tweening animations.
   var colorCache = {};
   util.hexToRGB = function(color) {
     if (colorCache[color]) {
