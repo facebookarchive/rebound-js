@@ -145,3 +145,35 @@ describe('Spring', function() {
 
 });
 
+describe('Rebound Utilities', function() {
+  it('should interpolate numbers in ranges', function() {
+    var val = rebound.util.mapValueInRange(150, 100, 200, 0, -300);
+    expect(val).toBe(-150);
+  });
+
+  it('should convert degrees to radians', function() {
+    var val = rebound.util.degreesToRadians(57.29577951308232);
+    expect(val).toEqual(1);
+  });
+
+  it('should convert radian to degrees', function() {
+    var val = rebound.util.radiansToDegrees(1);
+    expect(val).toBe(57.29577951308232);
+  });
+
+  it('should interpolate hex colors', function() {
+    var middleColor = rebound.util.interpolateColor(0.5, '#ff0000', '#0000ff');
+    expect(middleColor).toBe('#7f007f');
+  });
+
+  it('should interpolate hex colors with an optional input range', function() {
+    var middleColor = rebound.util.interpolateColor(100, '#ff0000', '#0000ff', 0, 200);
+    expect(middleColor).toBe('#7f007f');
+  });
+
+  it('should interpolate hex colors with an optional rgb return value', function() {
+    var middleColor = rebound.util.interpolateColor(0.5, '#ff0000', '#0000ff', 0, 1, true);
+    expect(middleColor).toBe('rgb(127,0,127)');
+  });
+});
+

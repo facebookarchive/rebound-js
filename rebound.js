@@ -867,6 +867,37 @@
     tension: 0
   });
 
+  var colorCache = {};
+  util.hexToRGB = function(color) {
+    if (colorCache[color]) {
+      return colorCache[color];
+    }
+    color = color.replace('#', '');
+    if (color.length === 3) {
+      color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+    }
+    var parts = color.match(/.{2}/g);
+
+    var color = {
+      r: parseInt(parts[0], 16),
+      g: parseInt(parts[1], 16),
+      b: parseInt(parts[2], 16)
+    };
+
+    colorCache[color] = color;
+    return color;
+  };
+
+  util.rgbToHex = function(r, g, b) {
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
+    r = r.length < 2 ? '0' + r : r;
+    g = g.length < 2 ? '0' + g : g;
+    b = b.length < 2 ? '0' + b : b;
+    return '#' + r + g + b;
+  };
+
   var MathUtil = rebound.MathUtil = {
     // This helper function does a linear interpolation of a value from
     // one range to another. This can be very useful for converting the
@@ -883,6 +914,24 @@
       return toLow + (valueScale * toRangeSize);
     },
 
+    // Interpolate two hex colors in a 0 - 1 range or optionally provide a custom range
+    // with fromLow,fromHight. The output will be in hex by default unless asRGB is true
+    // in which case it will be returned as an rgb string.
+    interpolateColor: function(val, startColor, endColor, fromLow, fromHigh, asRGB) {
+      fromLow = typeof fromLow === 'undefined' ? 0 : fromLow;
+      fromHigh = typeof fromHigh === 'undefined' ? 1 : fromHigh;
+      var startColor = util.hexToRGB(startColor);
+      var endColor = util.hexToRGB(endColor);
+      var r = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.r, endColor.r));
+      var g = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.g, endColor.g));
+      var b = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.b, endColor.b));
+      if (asRGB) {
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+      } else {
+        return util.rgbToHex(r, g, b);
+      }
+    },
+
     degreesToRadians: function(deg) {
       return (deg * Math.PI) / 180;
     },
@@ -892,6 +941,8 @@
     }
 
   }
+
+  util.extend(util, MathUtil);
 
 
   // Utilities
@@ -922,7 +973,7 @@
   // Export the public api using exports for common js or the window for
   // normal browser inclusion.
   if (typeof exports != 'undefined') {
-    extend(exports, rebound);
+    util.extend(exports, rebound);
   } else if (typeof window != 'undefined') {
     window.rebound = rebound;
   }
