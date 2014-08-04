@@ -143,6 +143,59 @@ describe('Spring', function() {
     expect(actualVelocities).toEqual(expectedVelocities);
   });
 
+  it('should not oscillate if overshoot clamping is enabled', function() {
+    var actualValues = [];
+    var listener = {
+      onSpringUpdate: function() {
+        actualValues.push(spring.getCurrentValue());
+      }
+    };
+
+    spyOn(listener, 'onSpringUpdate').andCallThrough();
+    spring.addListener(listener);
+    spring.setOvershootClampingEnabled(true);
+    spring.setEndValue(1);
+
+    var didOscillate = false;
+    var priorValue = -1;
+    for (var i = 0; i < actualValues.length; i++) {
+      var currentValue = actualValues[i];
+      if (currentValue < priorValue) {
+        didOscillate = true;
+        break;
+      }
+      priorValue = currentValue;
+    }
+
+    expect(didOscillate).toBe(false);
+  })
+
+  it('should not oscillate if the spring has 0 tension', function() {
+    var actualValues = [];
+    var listener = {
+      onSpringUpdate: function() {
+        actualValues.push(spring.getCurrentValue());
+      }
+    };
+
+    spyOn(listener, 'onSpringUpdate').andCallThrough();
+    spring.addListener(listener);
+    spring.setSpringConfig(rebound.SpringConfig.coastingConfigWithOrigamiFriction(7));
+    spring.setVelocity(1000);
+
+    var didOscillate = false;
+    var priorValue = -1;
+    for (var i = 0; i < actualValues.length; i++) {
+      var currentValue = actualValues[i];
+      if (currentValue < priorValue) {
+        didOscillate = true;
+        break;
+      }
+      priorValue = currentValue;
+    }
+
+    expect(didOscillate).toBe(false);
+  });
 });
 
 describe('Rebound Utilities', function() {
