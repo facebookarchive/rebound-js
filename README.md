@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/facebook/rebound-js.svg?branch=master)](https://travis-ci.org/facebook/rebound-js)
+
 ###REBOUND
 
 Rebound is a simple library that models Spring dynamics for the purpose of driving physical animations.
