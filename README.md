@@ -10,4 +10,5 @@ Rebound was originally written in Java to provide a lightweight physics system f
 
 The Library provides a SpringSystem for maintaining a set of Spring objects and iterating those Springs through a physics solver loop until equilibrium is achieved. The Spring class is the basic animation driver provided by Rebound. By attaching a listener to a Spring, you can observe its motion. The observer function is notified of position changes on the spring as it solves for equilibrium. These position updates can be mapped to an animation range to drive animated property updates on your user interface elements (translation, rotation, scale, etc).
 
-Check out the [docco](http://facebook.github.io/rebound/rebound-js/docs/rebound.html) for Rebound.js for more details.
+Check out the [examples](http://facebook.github.io/rebound-js/examples) and [docco](http://facebook.github.io/rebound-js/docs/rebound.html) for
+more details.
