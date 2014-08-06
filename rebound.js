@@ -396,6 +396,7 @@
     // Remove a Spring from simulation and clear its listeners.
     destroy: function() {
       this.listeners = [];
+      this.frames = [];
       this._springSystem.deregisterSpring(this);
     },
 
@@ -437,21 +438,21 @@
     // of UI elements attached to the spring even when moving without
     // animation. For example, when dragging an element you can
     // update the position of an attached view through a spring
-    // by calling `spring.setCurrentValue(x).setAtRest()`. When
+    // by calling `spring.setCurrentValue(x)`. When
     // the gesture ends you can update the Springs
-    // velocity and endValue without calling setAtRest
+    // velocity and endValue
     // `spring.setVelocity(gestureEndVelocity).setEndValue(flingTarget)`
     // to cause it to naturally animate the UI element to the resting
-    // position taking into account existing velocity. The codepath for
+    // position taking into account existing velocity. The codepaths for
     // synchronous movement and spring driven animation can
     // be unified using this technique.
-    setCurrentValue: function(currentValue) {
+    setCurrentValue: function(currentValue, skipSetAtRest) {
       this._startValue = currentValue;
       this._currentState.position = currentValue;
-      for (var i = 0, len = this.listeners.length; i < len; i++) {
-        var listener = this.listeners[i];
-        listener.onSpringUpdate && listener.onSpringUpdate(this);
+      if (!skipSetAtRest) {
+        this.setAtRest();
       }
+      this.notifyPositionUpdated(false, false);
       return this;
     },
 
@@ -675,16 +676,22 @@
         notifyAtRest = true;
       }
 
+      this.notifyPositionUpdated(notifyActivate, notifyAtRest);
+    },
+
+    notifyPositionUpdated: function(notifyActivate, notifyAtRest) {
       for (var i = 0, len = this.listeners.length; i < len; i++) {
         var listener = this.listeners[i];
-        if (notifyActivate) {
-          listener.onSpringActivate && listener.onSpringActivate(this);
+        if (notifyActivate && listener.onSpringActivate) {
+          listener.onSpringActivate(this);
         }
 
-        listener.onSpringUpdate && listener.onSpringUpdate(this);
+        if (listener.onSpringUpdate) {
+          listener.onSpringUpdate(this);
+        }
 
-        if (notifyAtRest) {
-          listener.onSpringAtRest && listener.onSpringAtRest(this);
+        if (notifyAtRest && listener.onSpringAtRest) {
+          listener.onSpringAtRest(this);
         }
       }
     },

@@ -196,6 +196,26 @@ describe('Spring', function() {
 
     expect(didOscillate).toBe(false);
   });
+
+  it('should be at rest after calling setCurrentValue', function() {
+    var springSystem = new rebound.SpringSystem();
+    var spring = springSystem.createSpring();
+    spring.setEndValue(1);
+    spring.setCurrentValue(-1);
+    expect(spring.isAtRest()).toBe(true);
+    expect(spring.getCurrentValue()).toBe(-1);
+    expect(spring.getEndValue()).toBe(-1);
+  });
+
+  it('should not be at rest if the skipSetAtRest parameter is passed to setCurrentValue while moving', function() {
+    var springSystem = new rebound.SpringSystem();
+    var spring = springSystem.createSpring();
+    spring.setEndValue(1);
+    spring.setCurrentValue(-1, true);
+    expect(spring.isAtRest()).toBe(false);
+    expect(spring.getCurrentValue()).toBe(-1);
+    expect(spring.getEndValue()).toBe(1);
+  })
 });
 
 describe('Rebound Utilities', function() {
