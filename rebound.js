@@ -986,7 +986,7 @@
   // Cross browser/node timer functions.
   util.onFrame = function onFrame(func) {
     var meth;
-    if (typeof process != 'undefined') {
+    if (typeof process != 'undefined' && process.title !== 'browser') {
       meth = setImmediate;
     } else {
       meth = window.requestAnimationFrame ||
