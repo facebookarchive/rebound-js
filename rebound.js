@@ -936,9 +936,9 @@
     // taking its input range in the _from_ parameters with the property
     // animation range in the _to_ parameters.
     mapValueInRange: function(value, fromLow, fromHigh, toLow, toHigh) {
-      fromRangeSize = fromHigh - fromLow;
-      toRangeSize = toHigh - toLow;
-      valueScale = (value - fromLow) / fromRangeSize;
+      var fromRangeSize = fromHigh - fromLow;
+      var toRangeSize = toHigh - toLow;
+      var valueScale = (value - fromLow) / fromRangeSize;
       return toLow + (valueScale * toRangeSize);
     },
 
