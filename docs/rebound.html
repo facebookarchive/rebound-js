@@ -685,6 +685,7 @@ animation off of the spring’s resolution curve.</p>
             
             <div class="content"><div class='highlight'><pre>    destroy: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
       <span class="hljs-keyword">this</span>.listeners = [];
+      <span class="hljs-keyword">this</span>.frames = [];
       <span class="hljs-keyword">this</span>._springSystem.deregisterSpring(<span class="hljs-keyword">this</span>);
     },</pre></div></div>
             
@@ -766,24 +767,24 @@ this you can allow the <code>SpringListener</code> to manage the position
 of UI elements attached to the spring even when moving without
 animation. For example, when dragging an element you can
 update the position of an attached view through a spring
-by calling <code>spring.setCurrentValue(x).setAtRest()</code>. When
+by calling <code>spring.setCurrentValue(x)</code>. When
 the gesture ends you can update the Springs
-velocity and endValue without calling setAtRest
+velocity and endValue
 <code>spring.setVelocity(gestureEndVelocity).setEndValue(flingTarget)</code>
 to cause it to naturally animate the UI element to the resting
-position taking into account existing velocity. The codepath for
+position taking into account existing velocity. The codepaths for
 synchronous movement and spring driven animation can
 be unified using this technique.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    setCurrentValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(currentValue)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    setCurrentValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(currentValue, skipSetAtRest)</span> {</span>
       <span class="hljs-keyword">this</span>._startValue = currentValue;
       <span class="hljs-keyword">this</span>._currentState.position = currentValue;
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, len = <span class="hljs-keyword">this</span>.listeners.length; i &lt; len; i++) {
-        <span class="hljs-keyword">var</span> listener = <span class="hljs-keyword">this</span>.listeners[i];
-        listener.onSpringUpdate &amp;&amp; listener.onSpringUpdate(<span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">if</span> (!skipSetAtRest) {
+        <span class="hljs-keyword">this</span>.setAtRest();
       }
+      <span class="hljs-keyword">this</span>.notifyPositionUpdated(<span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     },</pre></div></div>
             
@@ -1187,16 +1188,22 @@ displacement of the Spring.</p>
         notifyAtRest = <span class="hljs-literal">true</span>;
       }
 
+      <span class="hljs-keyword">this</span>.notifyPositionUpdated(notifyActivate, notifyAtRest);
+    },
+
+    notifyPositionUpdated: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(notifyActivate, notifyAtRest)</span> {</span>
       <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, len = <span class="hljs-keyword">this</span>.listeners.length; i &lt; len; i++) {
         <span class="hljs-keyword">var</span> listener = <span class="hljs-keyword">this</span>.listeners[i];
-        <span class="hljs-keyword">if</span> (notifyActivate) {
-          listener.onSpringActivate &amp;&amp; listener.onSpringActivate(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">if</span> (notifyActivate &amp;&amp; listener.onSpringActivate) {
+          listener.onSpringActivate(<span class="hljs-keyword">this</span>);
         }
 
-        listener.onSpringUpdate &amp;&amp; listener.onSpringUpdate(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">if</span> (listener.onSpringUpdate) {
+          listener.onSpringUpdate(<span class="hljs-keyword">this</span>);
+        }
 
-        <span class="hljs-keyword">if</span> (notifyAtRest) {
-          listener.onSpringAtRest &amp;&amp; listener.onSpringAtRest(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">if</span> (notifyAtRest &amp;&amp; listener.onSpringAtRest) {
+          listener.onSpringAtRest(<span class="hljs-keyword">this</span>);
         }
       }
     },</pre></div></div>
@@ -1655,9 +1662,9 @@ animation range in the <em>to</em> parameters.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    mapValueInRange: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, fromLow, fromHigh, toLow, toHigh)</span> {</span>
-      fromRangeSize = fromHigh - fromLow;
-      toRangeSize = toHigh - toLow;
-      valueScale = (value - fromLow) / fromRangeSize;
+      <span class="hljs-keyword">var</span> fromRangeSize = fromHigh - fromLow;
+      <span class="hljs-keyword">var</span> toRangeSize = toHigh - toLow;
+      <span class="hljs-keyword">var</span> valueScale = (value - fromLow) / fromRangeSize;
       <span class="hljs-keyword">return</span> toLow + (valueScale * toRangeSize);
     },</pre></div></div>
             
@@ -1745,6 +1752,18 @@ in which case it will be returned as an rgb string.</p>
             <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">removeFirst</span><span class="hljs-params">(array, item)</span> {</span>
     <span class="hljs-keyword">var</span> idx = array.indexOf(item);
     idx != -<span class="hljs-number">1</span> &amp;&amp; array.splice(idx, <span class="hljs-number">1</span>);
+  }
+
+  <span class="hljs-keyword">var</span> _onFrame;
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> window !== <span class="hljs-string">'undefined'</span>) {
+    _onFrame = window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      window.oRequestAnimationFrame;
+  }
+  <span class="hljs-keyword">if</span> (!_onFrame &amp;&amp; <span class="hljs-keyword">typeof</span> process !== <span class="hljs-string">'undefined'</span> &amp;&amp; process.title === <span class="hljs-string">'node'</span>) {
+    _onFrame = setImmediate;
   }</pre></div></div>
             
         </li>
@@ -1761,17 +1780,7 @@ in which case it will be returned as an rgb string.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  util.onFrame = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onFrame</span><span class="hljs-params">(func)</span> {</span>
-    <span class="hljs-keyword">var</span> meth;
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> process != <span class="hljs-string">'undefined'</span>) {
-      meth = setImmediate;
-    } <span class="hljs-keyword">else</span> {
-      meth = window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        window.oRequestAnimationFrame;
-    }
-    <span class="hljs-keyword">return</span> meth(func);
+    <span class="hljs-keyword">return</span> _onFrame(func);
   }</pre></div></div>
             
         </li>

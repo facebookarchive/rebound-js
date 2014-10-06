@@ -984,15 +984,15 @@
   }
 
   var _onFrame;
-  if (typeof process !== 'undefined' && process.title === 'node') {
-    _onFrame = setImmediate;
-  }
-  if (typeof _onFrame === 'undefined') {
-    _onFrame = window && window.requestAnimationFrame ||
+  if (typeof window !== 'undefined') {
+    _onFrame = window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
       window.msRequestAnimationFrame ||
       window.oRequestAnimationFrame;
+  }
+  if (!_onFrame && typeof process !== 'undefined' && process.title === 'node') {
+    _onFrame = setImmediate;
   }
 
   // Cross browser/node timer functions.
