@@ -983,19 +983,21 @@
     idx != -1 && array.splice(idx, 1);
   }
 
+  var _onFrame;
+  if (typeof process !== 'undefined' && process.title === 'node') {
+    _onFrame = setImmediate;
+  }
+  if (typeof _onFrame === 'undefined') {
+    _onFrame = window && window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      window.oRequestAnimationFrame;
+  }
+
   // Cross browser/node timer functions.
   util.onFrame = function onFrame(func) {
-    var meth;
-    if (typeof process != 'undefined' && process.title !== 'browser') {
-      meth = setImmediate;
-    } else {
-      meth = window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        window.oRequestAnimationFrame;
-    }
-    return meth(func);
+    return _onFrame(func);
   }
 
   // Export the public api using exports for common js or the window for

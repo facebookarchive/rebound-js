@@ -248,5 +248,22 @@ describe('Rebound Utilities', function() {
     var middleColor = rebound.util.interpolateColor(0.5, '#ff0000', '#0000ff', 0, 1, true);
     expect(middleColor).toBe('rgb(127,0,127)');
   });
+
+  it('should call functions async with onFrame', function() {
+    // checks for setImmediate in node
+    var called = false;
+    var next = function() {
+      called = true;
+    }
+    runs(function() {
+      rebound.util.onFrame(next);
+    });
+    waitsFor(function() {
+      return called;
+    }, 'next not called', 10);
+    runs(function() {
+      expect(called).toBe(true);
+    });
+  })
 });
 
