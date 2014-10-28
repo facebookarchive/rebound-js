@@ -7,13 +7,13 @@
 // ------
 // [Rebound](http://facebook.github.io/rebound) was originally written
 // in Java to provide a lightweight physics system for
-// [Facebook Home](https://play.google.com/store/apps/details?id=com.facebook.home)
-// and [Chat Heads](https://play.google.com/store/apps/details?id=com.facebook.orca)
+// [Home](https://play.google.com/store/apps/details?id=com.facebook.home) and
+// [Chat Heads](https://play.google.com/store/apps/details?id=com.facebook.orca)
 // on Android. It's now been adopted by several other Android
 // applications. This JavaScript port was written to provide a quick
 // way to demonstrate Rebound animations on the web for a
-// [conference talk](https://www.youtube.com/watch?v=s5kNm-DgyjY). Since then the
-// JavaScript version has been used to build some really nice interfaces.
+// [conference talk](https://www.youtube.com/watch?v=s5kNm-DgyjY). Since then
+// the JavaScript version has been used to build some really nice interfaces.
 // Check out [brandonwalkin.com](http://brandonwalkin.com) for an
 // example.
 //
@@ -35,7 +35,10 @@
 // will cause it to scale up and down with a springy animation.
 //
 // <div style="text-align:center; margin-bottom:50px; margin-top:50px">
-//   <img src="http://facebook.github.io/rebound/images/rebound.png" id="logo" />
+//   <img
+//     src="http://facebook.github.io/rebound/images/rebound.png"
+//     id="logo"
+//   />
 // </div>
 // <script src="../rebound.min.js"></script>
 // <script>
@@ -126,7 +129,7 @@
 
   // Bind a function to a context object.
   util.bind = function bind(func, context) {
-    args = slice.call(arguments, 2);
+    var args = slice.call(arguments, 2);
     return function() {
       func.apply(context, concat.call(args, slice.call(arguments)));
     };
@@ -175,21 +178,22 @@
     // SimulationLooper, and SteppingSimulationLooper. AnimationLooper is
     // the default as it is the most useful for common UI animations.
     setLooper: function(looper) {
-      this.looper = looper
+      this.looper = looper;
       looper.springSystem = this;
     },
 
     // Create and register a new spring with the SpringSystem. This
-    // Spring will now be solved for during the physics iteration loop. By default
-    // the spring will use the default Origami spring config with 40 tension and 7
-    // friction, but you can also provide your own values here.
+    // Spring will now be solved for during the physics iteration loop. By
+    // default the spring will use the default Origami spring config with 40
+    // tension and 7 friction, but you can also provide your own values here.
     createSpring: function(tension, friction) {
       var spring = new Spring(this);
       this.registerSpring(spring);
-      if (typeof tension === 'undefined' || typeof friction === 'undefined') {
+      if (tension === undefined || friction === undefined) {
         spring.setSpringConfig(SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG);
       } else {
-        var springConfig = SpringConfig.fromOrigamiTensionAndFriction(tension, friction);
+        var springConfig =
+          SpringConfig.fromOrigamiTensionAndFriction(tension, friction);
         spring.setSpringConfig(springConfig);
       }
       return spring;
@@ -278,7 +282,7 @@
 
       var i = 0, len = this.listeners.length;
       for (i = 0; i < len; i++) {
-        var listener = this.listeners[i];
+        listener = this.listeners[i];
         listener.onBeforeIntegrate && listener.onBeforeIntegrate(this);
       }
 
@@ -289,7 +293,7 @@
       }
 
       for (i = 0; i < len; i++) {
-        var listener = this.listeners[i];
+        listener = this.listeners[i];
         listener.onAfterIntegrate && listener.onAfterIntegrate(this);
       }
 
@@ -336,10 +340,10 @@
   // **Spring** provides a model of a classical spring acting to
   // resolve a body to equilibrium. Springs have configurable
   // tension which is a force multipler on the displacement of the
-  // spring from its rest point or `endValue` as defined by [Hooke’s
+  // spring from its rest point or `endValue` as defined by [Hooke's
   // law](http://en.wikipedia.org/wiki/Hooke's_law). Springs also have
   // configurable friction, which ensures that they do not oscillate
-  // infinitely. When a Spring is displaced by updating it’s resting
+  // infinitely. When a Spring is displaced by updating it's resting
   // or `currentValue`, the SpringSystems that contain that Spring
   // will automatically start looping to solve for equilibrium. As each
   // timestep passes, `SpringListener` objects attached to the Spring
@@ -468,7 +472,8 @@
       return this._currentState.position;
     },
 
-    // Get the absolute distance of the Spring from it’s resting endValue position.
+    // Get the absolute distance of the Spring from it's resting endValue
+    // position.
     getCurrentDisplacementDistance: function() {
       return this.getDisplacementDistanceForState(this._currentState);
     },
@@ -492,7 +497,8 @@
       this._springSystem.activateSpring(this.getId());
       for (var i = 0, len = this.listeners.length; i < len; i++) {
         var listener = this.listeners[i];
-        listener.onSpringEndStateChange && listener.onSpringEndStateChange(this);
+        var onChange = listener.onSpringEndStateChange;
+        onChange && onChange(this);
       }
       return this;
     },
@@ -566,9 +572,11 @@
     // the direction it was moving in when it started to the current
     // position and end value.
     isOvershooting: function() {
+      var start = this._startValue;
+      var end = this._endValue;
       return this._springConfig.tension > 0 &&
-             ((this._startValue < this._endValue && this.getCurrentValue() > this._endValue) ||
-             (this._startValue > this._endValue && this.getCurrentValue() < this._endValue));
+       ((start < end && this.getCurrentValue() > end) ||
+       (start > end && this.getCurrentValue() < end));
     },
 
     // Spring.advance is the main solver method for the Spring. It takes
@@ -615,26 +623,35 @@
         }
 
         aVelocity = velocity;
-        aAcceleration = (tension * (this._endValue - tempPosition)) - friction * velocity;
+        aAcceleration =
+          (tension * (this._endValue - tempPosition)) - friction * velocity;
 
         tempPosition = position + aVelocity * Spring.SOLVER_TIMESTEP_SEC * 0.5;
-        tempVelocity = velocity + aAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        tempVelocity =
+          velocity + aAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
         bVelocity = tempVelocity;
-        bAcceleration = (tension * (this._endValue - tempPosition)) - friction * tempVelocity;
+        bAcceleration =
+          (tension * (this._endValue - tempPosition)) - friction * tempVelocity;
 
         tempPosition = position + bVelocity * Spring.SOLVER_TIMESTEP_SEC * 0.5;
-        tempVelocity = velocity + bAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        tempVelocity =
+          velocity + bAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
         cVelocity = tempVelocity;
-        cAcceleration = (tension * (this._endValue - tempPosition)) - friction * tempVelocity;
+        cAcceleration =
+          (tension * (this._endValue - tempPosition)) - friction * tempVelocity;
 
         tempPosition = position + cVelocity * Spring.SOLVER_TIMESTEP_SEC * 0.5;
-        tempVelocity = velocity + cAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        tempVelocity =
+          velocity + cAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
         dVelocity = tempVelocity;
-        dAcceleration = (tension * (this._endValue - tempPosition)) - friction * tempVelocity;
+        dAcceleration =
+          (tension * (this._endValue - tempPosition)) - friction * tempVelocity;
 
-        dxdt = 1.0/6.0 * (aVelocity + 2.0 * (bVelocity + cVelocity) + dVelocity);
-        dvdt = 1.0/6.0 *
-          (aAcceleration + 2.0 * (bAcceleration + cAcceleration) + dAcceleration);
+        dxdt =
+          1.0/6.0 * (aVelocity + 2.0 * (bVelocity + cVelocity) + dVelocity);
+        dvdt = 1.0/6.0 * (
+          aAcceleration + 2.0 * (bAcceleration + cAcceleration) + dAcceleration
+        );
 
         position += dxdt * Spring.SOLVER_TIMESTEP_SEC;
         velocity += dvdt * Spring.SOLVER_TIMESTEP_SEC;
@@ -709,7 +726,7 @@
       return this._wasAtRest;
     },
 
-    // Check if the Spring is atRest meaning that it’s currentValue and
+    // Check if the Spring is atRest meaning that it's currentValue and
     // endValue are the same and that it has no velocity. The previously
     // described thresholds for speed and displacement define the bounds
     // of this equivalence check. If the Spring has 0 tension, then it will
@@ -717,7 +734,8 @@
     // restSpeedThreshold.
     isAtRest: function() {
       return Math.abs(this._currentState.velocity) < this._restSpeedThreshold &&
-        (this.getDisplacementDistanceForState(this._currentState) <= this._displacementFromRestThreshold ||
+        (this.getDisplacementDistanceForState(this._currentState) <=
+          this._displacementFromRestThreshold ||
         this._springConfig.tension === 0);
     },
 
@@ -791,9 +809,9 @@
 
   // Loopers
   // -------
-  // **AnimationLooper** plays each frame of the SpringSystem on animation timing loop.
-  // This is the default type of looper for a new spring system as it is the most common
-  // when developing UI.
+  // **AnimationLooper** plays each frame of the SpringSystem on animation
+  // timing loop. This is the default type of looper for a new spring system
+  // as it is the most common when developing UI.
   var AnimationLooper = rebound.AnimationLooper = function AnimationLooper() {
     this.springSystem = null;
     var _this = this;
@@ -803,16 +821,16 @@
 
     this.run = function() {
       util.onFrame(_run);
-    }
+    };
   };
 
   // **SimulationLooper** resolves the SpringSystem to a resting state in a
-  // tight and blocking loop. This is useful for synchronously generating pre-recorded
-  // animations that can then be played on a timing loop later. Sometimes this lead to
-  // better performance to pre-record a single spring curve and use it to drive many
-  // animations; however, it can make dynamic response to user input a bit trickier to
-  // implement.
-  var SimulationLooper = rebound.SimulationLooper = function SimulationLooper(timestep) {
+  // tight and blocking loop. This is useful for synchronously generating
+  // pre-recorded animations that can then be played on a timing loop later.
+  // Sometimes this lead to better performance to pre-record a single spring
+  // curve and use it to drive many animations; however, it can make dynamic
+  // response to user input a bit trickier to implement.
+  rebound.SimulationLooper = function SimulationLooper(timestep) {
     this.springSystem = null;
     var time = 0;
     var running = false;
@@ -827,25 +845,26 @@
         this.springSystem.loop(time+=timestep);
       }
       running = false;
-    }
+    };
   };
 
-  // **SteppingSimulationLooper** resolves the SpringSystem one step at a time controlled
-  // by an outside loop. This is useful for testing and verifying the behavior of a SpringSystem
-  // or if you want to control your own timing loop for some reason e.g. slowing down or speeding
-  // up the simulation.
-  var SteppingSimulationLooper = rebound.SteppingSimulationLooper = function(timestep) {
+  // **SteppingSimulationLooper** resolves the SpringSystem one step at a
+  // time controlled by an outside loop. This is useful for testing and
+  // verifying the behavior of a SpringSystem or if you want to control your own
+  // timing loop for some reason e.g. slowing down or speeding up the
+  // simulation.
+  rebound.SteppingSimulationLooper = function(timestep) {
     this.springSystem = null;
     var time = 0;
-    var running = false;
 
-    // this.run is NOOP'd here to allow control from the outside using this.step.
+    // this.run is NOOP'd here to allow control from the outside using
+    // this.step.
     this.run = function(){};
 
     // Perform one step toward resolving the SpringSystem.
     this.step = function(timestep) {
       this.springSystem.loop(time+=timestep);
-    }
+    };
   };
 
   // Math for converting from
@@ -882,19 +901,24 @@
         OrigamiValueConverter.frictionFromOrigamiValue(friction));
     },
 
-    // Create a SpringConfig with no tension or a coasting spring with some amount
-    // of Friction so that it does not coast infininitely.
+    // Create a SpringConfig with no tension or a coasting spring with some
+    // amount of Friction so that it does not coast infininitely.
     coastingConfigWithOrigamiFriction: function(friction) {
-      return new SpringConfig(0, OrigamiValueConverter.frictionFromOrigamiValue(friction));
+      return new SpringConfig(
+        0,
+        OrigamiValueConverter.frictionFromOrigamiValue(friction)
+      );
     }
   });
 
-  SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
+  SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG =
+    SpringConfig.fromOrigamiTensionAndFriction(40, 7);
 
   util.extend(SpringConfig.prototype, {friction: 0, tension: 0});
 
   // Here are a couple of function to convert colors between hex codes and RGB
-  // component values. These are handy when performing color tweening animations.
+  // component values. These are handy when performing color
+  // tweening animations.
   var colorCache = {};
   util.hexToRGB = function(color) {
     if (colorCache[color]) {
@@ -906,14 +930,14 @@
     }
     var parts = color.match(/.{2}/g);
 
-    var color = {
+    var ret = {
       r: parseInt(parts[0], 16),
       g: parseInt(parts[1], 16),
       b: parseInt(parts[2], 16)
     };
 
-    colorCache[color] = color;
-    return color;
+    colorCache[color] = ret;
+    return ret;
   };
 
   util.rgbToHex = function(r, g, b) {
@@ -942,17 +966,24 @@
       return toLow + (valueScale * toRangeSize);
     },
 
-    // Interpolate two hex colors in a 0 - 1 range or optionally provide a custom range
-    // with fromLow,fromHight. The output will be in hex by default unless asRGB is true
-    // in which case it will be returned as an rgb string.
-    interpolateColor: function(val, startColor, endColor, fromLow, fromHigh, asRGB) {
-      fromLow = typeof fromLow === 'undefined' ? 0 : fromLow;
-      fromHigh = typeof fromHigh === 'undefined' ? 1 : fromHigh;
-      var startColor = util.hexToRGB(startColor);
-      var endColor = util.hexToRGB(endColor);
-      var r = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.r, endColor.r));
-      var g = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.g, endColor.g));
-      var b = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.b, endColor.b));
+    // Interpolate two hex colors in a 0 - 1 range or optionally provide a
+    // custom range with fromLow,fromHight. The output will be in hex by default
+    // unless asRGB is true in which case it will be returned as an rgb string.
+    interpolateColor:
+      function(val, startColor, endColor, fromLow, fromHigh, asRGB) {
+      fromLow = fromLow === undefined ? 0 : fromLow;
+      fromHigh = fromHigh === undefined ? 1 : fromHigh;
+      startColor = util.hexToRGB(startColor);
+      endColor = util.hexToRGB(endColor);
+      var r = Math.floor(
+        util.mapValueInRange(val, fromLow, fromHigh, startColor.r, endColor.r)
+      );
+      var g = Math.floor(
+        util.mapValueInRange(val, fromLow, fromHigh, startColor.g, endColor.g)
+      );
+      var b = Math.floor(
+        util.mapValueInRange(val, fromLow, fromHigh, startColor.b, endColor.b)
+      );
       if (asRGB) {
         return 'rgb(' + r + ',' + g + ',' + b + ')';
       } else {
@@ -998,7 +1029,7 @@
   // Cross browser/node timer functions.
   util.onFrame = function onFrame(func) {
     return _onFrame(func);
-  }
+  };
 
   // Export the public api using exports for common js or the window for
   // normal browser inclusion.
@@ -1008,6 +1039,7 @@
     window.rebound = rebound;
   }
 })();
+
 
 // Legal Stuff
 // -----------
