@@ -178,7 +178,7 @@
     // SimulationLooper, and SteppingSimulationLooper. AnimationLooper is
     // the default as it is the most useful for common UI animations.
     setLooper: function(looper) {
-      this.looper = looper
+      this.looper = looper;
       looper.springSystem = this;
     },
 
@@ -821,7 +821,7 @@
 
     this.run = function() {
       util.onFrame(_run);
-    }
+    };
   };
 
   // **SimulationLooper** resolves the SpringSystem to a resting state in a
@@ -845,7 +845,7 @@
         this.springSystem.loop(time+=timestep);
       }
       running = false;
-    }
+    };
   };
 
   // **SteppingSimulationLooper** resolves the SpringSystem one step at a
@@ -864,7 +864,7 @@
     // Perform one step toward resolving the SpringSystem.
     this.step = function(timestep) {
       this.springSystem.loop(time+=timestep);
-    }
+    };
   };
 
   // Math for converting from
@@ -1029,7 +1029,7 @@
   // Cross browser/node timer functions.
   util.onFrame = function onFrame(func) {
     return _onFrame(func);
-  }
+  };
 
   // Export the public api using exports for common js or the window for
   // normal browser inclusion.
