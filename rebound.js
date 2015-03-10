@@ -199,6 +199,12 @@
       return spring;
     },
 
+    // Create a new spring that uses Origami Pop Animation bounciness and speed values.
+    createSpringWithBouncinessAndSpeed: function(bounciness, speed) {
+      var springConfig = BouncyConverter.fromBouncinessAndSpeed(bounciness, speed);
+      return this.createSpring(springConfig.tension, springConfig.friction);
+    },
+
     // You can check if a SpringSystem is idle or active by calling
     // getIsIdle. If all of the Springs in the SpringSystem are at rest,
     // i.e. the physics forces have reached equilibrium, then this
@@ -865,6 +871,62 @@
     this.step = function(timestep) {
       this.springSystem.loop(time+=timestep);
     };
+  };
+
+  // Convert values from the Quartz Composer Pop Animation Patch into QC tension and
+  // friction values.
+  var BouncyConverter = rebound.BouncyConverter = {
+    fromBouncinessAndSpeed: function(bounciness, speed) {
+      var b = this.normalize(bounciness / 1.7, 0, 20.);
+      b = this.projectNormal(b, 0.0, 0.8);
+      var s = this.normalize(speed / 1.7, 0, 20.);
+      var tension = this.projectNormal(s, 0.5, 200);
+      var friction = this.quadraticOutInterpolation(b, this.b3Nobounce(tension), 0.01);
+      return {
+        tension: tension,
+        friction: friction
+      };
+    },
+
+    normalize: function(value, startValue, endValue) {
+      return (value - startValue) / (endValue - startValue);
+    },
+
+    projectNormal: function(n, start, end) {
+      return start + (n * (end - start));
+    },
+
+    linearInterpolation: function(t, start, end) {
+      return t * end + (1.0 - t) * start;
+    },
+
+    quadraticOutInterpolation: function(t, start, end) {
+      this.linearInterpolation(2 * t - t * t, start, end);
+    },
+
+    b3Friction1: function(x) {
+      return (0.0007 * Math.pow(x, 3)) - (0.031 * Math.pow(x, 2)) + 0.64 * x + 1.28;
+    },
+
+    b3Friction2: function(x) {
+      return (0.000044 * Math.pow(x, 3)) - (0.006 * Math.pow(x, 2)) + 0.36 * x + 2.;
+    },
+
+    b3Friction3: function(x) {
+      return (0.00000045 * Math.pow(x, 3)) - (0.000332 * Math.pow(x, 2)) + 0.1078 * x + 5.84;
+    },
+
+    b3Nobounce: function(tension) {
+      var friction = 0;
+      if (tension <= 18) {
+        friction = this.b3Friction1(tension);
+      } else if (tension > 18 && tension <= 44) {
+        friction = this.b3Friction2(tension);
+      } else if (tension > 44) {
+        friction = this.b3Friction3(tension);
+      }
+      return friction;
+    }
   };
 
   // Math for converting from
