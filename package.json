@@ -1,6 +1,6 @@
 {
   "name": "rebound",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A simple library for modeling spring dynamics",
   "main": "rebound.js",
   "author": "Facebook",
