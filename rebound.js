@@ -1116,7 +1116,10 @@
       window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
       window.msRequestAnimationFrame ||
-      window.oRequestAnimationFrame;
+      window.oRequestAnimationFrame ||
+      function(callback) {
+        window.setTimeout(callback, 1000 / 60);
+      };
   }
   if (!_onFrame && typeof process !== 'undefined' && process.title === 'node') {
     _onFrame = setImmediate;
