@@ -182,27 +182,41 @@
       looper.springSystem = this;
     },
 
-    // Create and register a new spring with the SpringSystem. This
-    // Spring will now be solved for during the physics iteration loop. By
-    // default the spring will use the default Origami spring config with 40
-    // tension and 7 friction, but you can also provide your own values here.
+    // Add a new spring to this SpringSystem. This Spring will now be solved for
+    // during the physics iteration loop. By default the spring will use the
+    // default Origami spring config with 40 tension and 7 friction, but you can
+    // also provide your own values here.
     createSpring: function(tension, friction) {
-      var spring = new Spring(this);
-      this.registerSpring(spring);
+      var springConfig;
       if (tension === undefined || friction === undefined) {
-        spring.setSpringConfig(SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG);
+        springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
       } else {
-        var springConfig =
+        springConfig =
           SpringConfig.fromOrigamiTensionAndFriction(tension, friction);
-        spring.setSpringConfig(springConfig);
       }
-      return spring;
+      return this.createSpringWithConfig(springConfig);
     },
 
-    // Create a new spring that uses Origami Pop Animation bounciness and speed values.
+    // Add a spring with a specified bounciness and speed. To replicate Origami
+    // compositions based on PopAnimation patches, use this factory method to
+    // create matching springs.
     createSpringWithBouncinessAndSpeed: function(bounciness, speed) {
-      var springConfig = BouncyConverter.fromBouncinessAndSpeed(bounciness, speed);
-      return this.createSpring(springConfig.tension, springConfig.friction);
+      var springConfig;
+      if (bounciness === undefined || speed === undefined) {
+        springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
+      } else {
+        springConfig =
+          SpringConfig.fromBouncinessAndSpeed(bounciness, speed);
+      }
+      return this.createSpringWithConfig(springConfig);
+    },
+
+    // Add a spring with the provided SpringConfig.
+    createSpringWithConfig: function(springConfig) {
+      var spring = new Spring(this);
+      this.registerSpring(spring);
+      spring.setSpringConfig(springConfig);
+      return spring;
     },
 
     // You can check if a SpringSystem is idle or active by calling
@@ -873,62 +887,6 @@
     };
   };
 
-  // Convert values from the Quartz Composer Pop Animation Patch into QC tension and
-  // friction values.
-  var BouncyConverter = rebound.BouncyConverter = {
-    fromBouncinessAndSpeed: function(bounciness, speed) {
-      var b = this.normalize(bounciness / 1.7, 0, 20.);
-      b = this.projectNormal(b, 0.0, 0.8);
-      var s = this.normalize(speed / 1.7, 0, 20.);
-      var tension = this.projectNormal(s, 0.5, 200);
-      var friction = this.quadraticOutInterpolation(b, this.b3Nobounce(tension), 0.01);
-      return {
-        tension: tension,
-        friction: friction
-      };
-    },
-
-    normalize: function(value, startValue, endValue) {
-      return (value - startValue) / (endValue - startValue);
-    },
-
-    projectNormal: function(n, start, end) {
-      return start + (n * (end - start));
-    },
-
-    linearInterpolation: function(t, start, end) {
-      return t * end + (1.0 - t) * start;
-    },
-
-    quadraticOutInterpolation: function(t, start, end) {
-      this.linearInterpolation(2 * t - t * t, start, end);
-    },
-
-    b3Friction1: function(x) {
-      return (0.0007 * Math.pow(x, 3)) - (0.031 * Math.pow(x, 2)) + 0.64 * x + 1.28;
-    },
-
-    b3Friction2: function(x) {
-      return (0.000044 * Math.pow(x, 3)) - (0.006 * Math.pow(x, 2)) + 0.36 * x + 2.;
-    },
-
-    b3Friction3: function(x) {
-      return (0.00000045 * Math.pow(x, 3)) - (0.000332 * Math.pow(x, 2)) + 0.1078 * x + 5.84;
-    },
-
-    b3Nobounce: function(tension) {
-      var friction = 0;
-      if (tension <= 18) {
-        friction = this.b3Friction1(tension);
-      } else if (tension > 18 && tension <= 44) {
-        friction = this.b3Friction2(tension);
-      } else if (tension > 44) {
-        friction = this.b3Friction3(tension);
-      }
-      return friction;
-    }
-  };
-
   // Math for converting from
   // [Origami](http://facebook.github.io/origami/) to
   // [Rebound](http://facebook.github.io/rebound).
@@ -952,6 +910,72 @@
     }
   };
 
+  // BouncyConversion provides math for converting from Origami PopAnimation
+  // config values to regular Origami tension and friction values. If you are
+  // trying to replicate prototypes made with PopAnimation patches in Origami,
+  // then you should create your springs with
+  // SpringSystem.createSpringWithBouncinessAndSpeed, which uses this Math
+  // internally to create a spring to match the provided PopAnimation
+  // configuration from Origami.
+  var BouncyConversion = rebound.BouncyConversion = function(bounciness, speed){
+    this.bounciness = bounciness;
+    this.speed = speed;
+    var b = this.normalize(bounciness / 1.7, 0, 20.0);
+    b = this.projectNormal(b, 0.0, 0.8);
+    var s = this.normalize(speed / 1.7, 0, 20.0);
+    this.bouncyTension = this.projectNormal(s, 0.5, 200)
+    this.bouncyFriction = this.quadraticOutInterpolation(
+      b,
+      this.b3Nobounce(this.bouncyTension),
+      0.01);
+  }
+
+  util.extend(BouncyConversion.prototype, {
+
+    normalize: function(value, startValue, endValue) {
+      return (value - startValue) / (endValue - startValue);
+    },
+
+    projectNormal: function(n, start, end) {
+      return start + (n * (end - start));
+    },
+
+    linearInterpolation: function(t, start, end) {
+      return t * end + (1.0 - t) * start;
+    },
+
+    quadraticOutInterpolation: function(t, start, end) {
+      return this.linearInterpolation(2*t - t*t, start, end);
+    },
+
+    b3Friction1: function(x) {
+      return (0.0007 * Math.pow(x, 3)) -
+        (0.031 * Math.pow(x, 2)) + 0.64 * x + 1.28;
+    },
+
+    b3Friction2: function(x) {
+      return (0.000044 * Math.pow(x, 3)) -
+        (0.006 * Math.pow(x, 2)) + 0.36 * x + 2.;
+    },
+
+    b3Friction3: function(x) {
+      return (0.00000045 * Math.pow(x, 3)) -
+        (0.000332 * Math.pow(x, 2)) + 0.1078 * x + 5.84;
+    },
+
+    b3Nobounce: function(tension) {
+      var friction = 0;
+      if (tension <= 18) {
+        friction = this.b3Friction1(tension);
+      } else if (tension > 18 && tension <= 44) {
+        friction = this.b3Friction2(tension);
+      } else {
+        friction = this.b3Friction3(tension);
+      }
+      return friction;
+    }
+  });
+
   util.extend(SpringConfig, {
     // Convert an origami Spring tension and friction to Rebound spring
     // constants. If you are prototyping a design with Origami, this
@@ -961,6 +985,16 @@
       return new SpringConfig(
         OrigamiValueConverter.tensionFromOrigamiValue(tension),
         OrigamiValueConverter.frictionFromOrigamiValue(friction));
+    },
+
+    // Convert an origami PopAnimation Spring bounciness and speed to Rebound
+    // spring constants. If you are using PopAnimation patches in Origami, this
+    // utility will provide springs that match your prototype.
+    fromBouncinessAndSpeed: function(bounciness, speed) {
+      var bouncyConversion = new rebound.BouncyConversion(bounciness, speed);
+      return this.fromOrigamiTensionAndFriction(
+        bouncyConversion.bouncyTension,
+        bouncyConversion.bouncyFriction);
     },
 
     // Create a SpringConfig with no tension or a coasting spring with some
