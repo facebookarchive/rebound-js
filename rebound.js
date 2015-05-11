@@ -684,7 +684,7 @@
       this._currentState.velocity = velocity;
 
       if (this._timeAccumulator > 0) {
-        this.interpolate(this._timeAccumulator / Spring.SOLVER_TIMESTEP_SEC);
+        this._interpolate(this._timeAccumulator / Spring.SOLVER_TIMESTEP_SEC);
       }
 
       if (this.isAtRest() ||
@@ -770,7 +770,7 @@
       return this;
     },
 
-    interpolate: function(alpha) {
+    _interpolate: function(alpha) {
       this._currentState.position = this._currentState.position *
         alpha + this._previousState.position * (1 - alpha);
       this._currentState.velocity = this._currentState.velocity *
