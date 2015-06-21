@@ -420,7 +420,6 @@
     // Remove a Spring from simulation and clear its listeners.
     destroy: function() {
       this.listeners = [];
-      this.frames = [];
       this._springSystem.deregisterSpring(this);
     },
 
