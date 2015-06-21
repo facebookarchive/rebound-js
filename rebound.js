@@ -637,6 +637,8 @@
 
         this._timeAccumulator -= Spring.SOLVER_TIMESTEP_SEC;
 
+        // Date.now() returns values in ms. SOLVER_TIMESTEP_SEC is 1ms.
+        // So the only reason that we run into this is because of floating point error.
         if (this._timeAccumulator < Spring.SOLVER_TIMESTEP_SEC) {
           this._previousState.position = position;
           this._previousState.velocity = velocity;
@@ -684,6 +686,9 @@
       this._currentState.velocity = velocity;
 
       if (this._timeAccumulator > 0) {
+        // This is a very complicated way of implementing compensation. Instead of using a state variable
+        // _currentState, it would be much easier to run the loop one more time and instead of using
+        // Spring.SOLVER_TIMESTEP_SEC for the delta time, use the remaining precise time.
         this._interpolate(this._timeAccumulator / Spring.SOLVER_TIMESTEP_SEC);
       }
 
