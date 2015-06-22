@@ -659,9 +659,9 @@
         cAcceleration =
           (tension * (this._endValue - tempPosition)) - friction * tempVelocity;
 
-        tempPosition = position + cVelocity * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        tempPosition = position + cVelocity * Spring.SOLVER_TIMESTEP_SEC;
         tempVelocity =
-          velocity + cAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+          velocity + cAcceleration * Spring.SOLVER_TIMESTEP_SEC;
         dVelocity = tempVelocity;
         dAcceleration =
           (tension * (this._endValue - tempPosition)) - friction * tempVelocity;
