@@ -1,5 +1,5 @@
 export class SpringSystem {
-  listeners: Array<Listener> | null;
+  listeners: Array<Listener>|null;
   looper: Looper;
 
   constructor(looper: Looper);
@@ -7,15 +7,16 @@ export class SpringSystem {
   setLooper(looper: Looper);
 
   createSpring(tension?: number, friction?: number): Spring;
-  createSpringWithBouncinessAndSpeed(bounciness?: number, speed?: number): Spring;
+  createSpringWithBouncinessAndSpeed(bounciness?: number, speed?: number):
+      Spring;
   createSpringWithConfig(kwargs: SpringConfigDict): Spring;
 
   getIsIdle(): boolean;
   getSpringById(id: number): Spring;
   getAllSprings(): Array<Spring>;
 
-  registerSpring(value: Spring):void;
-  deregisterSpring(value: Spring):void;
+  registerSpring(value: Spring): void;
+  deregisterSpring(value: Spring): void;
 
   advance(time: number, deltaTime: number): void;
   loop(currentTimeMillis: number): void;
@@ -31,7 +32,7 @@ export class Spring {
   static MAX_DELTA_TIME_SEC: number;
   static SOLVER_TIMESTEP_SEC: number;
 
-  listeners: Array<Listener> | null;
+  listeners: Array<Listener>|null;
 
   constructor(system: SpringSystem);
 
@@ -69,7 +70,7 @@ export class Spring {
   advance(time: number, realDeltaTime: number): void;
   systemShouldAdvance(): boolean;
 
-  notifyPositionUpdated(notifyActivate?: boolean, notifyAtRest?: boolean):void;
+  notifyPositionUpdated(notifyActivate?: boolean, notifyAtRest?: boolean): void;
 
   wasAtRest(): boolean;
   isAtRest(): boolean;
@@ -113,8 +114,10 @@ export type SpringConfigDict = {
 export class SpringConfig {
   static DEFAULT_ORIGAMI_SPRING_CONFIG: SpringConfig;
 
-  static fromOrigamiTensionAndFriction(tension: number, friction: number): SpringConfig;
-  static fromBouncinessAndSpeed(bounciness: number, speed: number): SpringConfig;
+  static fromOrigamiTensionAndFriction(tension: number, friction: number):
+      SpringConfig;
+  static fromBouncinessAndSpeed(bounciness: number, speed: number):
+      SpringConfig;
   static coastingConfigWithOrigamiFriction(friction: number): SpringConfig;
 
   tension: number;
@@ -182,7 +185,7 @@ export type RequestAnimationFrame = typeof requestAnimationFrame;
 
 export namespace util {
   function bind(func: Function, context: any): Function;
-  function extend<T, U>(target: T, source: U): T & U;
+  function extend<T, U>(target: T, source: U): T&U;
 
   function hexToRGB(color: string): RGB;
   function rgbToHex(r: number, g: number, b: number): string;
@@ -191,8 +194,12 @@ export namespace util {
 
   // These are technically aliased to MathUtil, but it's not worth breaking them
   // out
-  function mapValueInRange(value: number, fromLow: number, fromHigh: number, toLow: number, toHigh: number): number;
-  function interpolateColor(val: number, startColor: string, endColor: string, fromLow?: number, fromHigh?: number, asRGB?: boolean);
+  function mapValueInRange(
+      value: number, fromLow: number, fromHigh: number, toLow: number,
+      toHigh: number): number;
+  function interpolateColor(
+      val: number, startColor: string, endColor: string, fromLow?: number,
+      fromHigh?: number, asRGB?: boolean);
   function degreesToRadians(value: number): number;
   function radiansToDegrees(value: number): number;
 }
