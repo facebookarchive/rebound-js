@@ -2,7 +2,7 @@ export class SpringSystem {
   listeners: Array<Listener>|null;
   looper: Looper;
 
-  constructor(looper: Looper);
+  constructor(looper?: Looper);
 
   setLooper(looper: Looper);
 
