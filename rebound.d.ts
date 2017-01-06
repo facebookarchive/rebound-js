@@ -143,7 +143,7 @@ export class AnimationLooper implements Looper {
 export class SimulationLooper implements Looper {
   springSystem: SpringSystem;
 
-  constructor(timestep: number);
+  constructor(timestep?: number);
 
   run(): void;
 }
