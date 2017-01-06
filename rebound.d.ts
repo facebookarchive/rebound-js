@@ -74,7 +74,7 @@ export class Spring {
 
   wasAtRest(): boolean;
   isAtRest(): boolean;
-  setAtRest(value: boolean): number;
+  setAtRest(): number;
 
   interpolate(value: number): void;
 
