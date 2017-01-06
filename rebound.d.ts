@@ -4,7 +4,7 @@ export class SpringSystem {
 
   constructor(looper?: Looper);
 
-  setLooper(looper: Looper);
+  setLooper(looper: Looper): void;
 
   createSpring(tension?: number, friction?: number): Spring;
   createSpringWithBouncinessAndSpeed(bounciness?: number, speed?: number):
@@ -41,10 +41,10 @@ export class Spring {
   getId(): number;
 
   getSpringConfig(): SpringConfigDict;
-  setSpringConfig(value: SpringConfigDict): void;
+  setSpringConfig(value: SpringConfigDict): Spring;
 
   getCurrentValue(): number;
-  setCurrentValue(currentValue: number, skipSetAtRest?: boolean);
+  setCurrentValue(currentValue: number, skipSetAtRest?: boolean): Spring;
 
   getStartValue(): number;
 
@@ -52,18 +52,18 @@ export class Spring {
   getCurrentDisplacementDistanceForState(state: PhysicsState): number;
 
   getEndValue(): number;
-  setEndValue(value: number): void;
+  setEndValue(value: number): Spring;
 
   getVelocity(): number;
-  setVelocity(value: number): void;
+  setVelocity(value: number): Spring;
 
   getRestSpeedThreshold(): number;
-  setRestSpeedThreshold(value: number): void;
+  setRestSpeedThreshold(value: number): Spring;
 
   getRestDisplacementThreshold(): number;
 
   isOvershootClampingEnabled(): boolean;
-  setOvershootClampingEnabled(value: boolean): void;
+  setOvershootClampingEnabled(value: boolean): Spring;
 
   isOvershooting(): boolean;
 
@@ -74,14 +74,14 @@ export class Spring {
 
   wasAtRest(): boolean;
   isAtRest(): boolean;
-  setAtRest(): number;
+  setAtRest(): Spring;
 
   interpolate(value: number): void;
 
   getListeners(): Array<Listener>;
-  addListener(value: Listener): void;
-  removeListener(value: Listener): void;
-  removeAllListeners(): void;
+  addListener(value: Listener): Spring;
+  removeListener(value: Listener): Spring;
+  removeAllListeners(): Spring;
 
   currentValueIsApproximately(value: number): boolean;
 }
@@ -199,7 +199,7 @@ export namespace util {
       toHigh: number): number;
   function interpolateColor(
       val: number, startColor: string, endColor: string, fromLow?: number,
-      fromHigh?: number, asRGB?: boolean);
+      fromHigh?: number, asRGB?: boolean): string;
   function degreesToRadians(value: number): number;
   function radiansToDegrees(value: number): number;
 }
