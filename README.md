@@ -1,12 +1,12 @@
 [![Build
 Status](https://travis-ci.org/facebook/rebound-js.svg?branch=master)](https://travis-ci.org/facebook/rebound-js)
 
-###REBOUND
+### REBOUND
 
 Rebound is a simple library that models Spring dynamics for the purpose of
 driving physical animations.
 
-###ORIGIN
+### ORIGIN
 
 Rebound was originally written in Java to provide a lightweight physics system
 for Facebook Home and Chat Heads on Android. It’s now been adopted by several
@@ -15,7 +15,7 @@ way to demonstrate Rebound animations on the web for a conference talk. Since
 then the JavaScript version has been used to build some really nice interfaces.
 Check out [brandonwalkin.com](http://brandonwalkin.com) for an example.
 
-###OVERVIEW
+### OVERVIEW
 
 The Library provides a SpringSystem for maintaining a set of Spring objects and
 iterating those Springs through a physics solver loop until equilibrium is
