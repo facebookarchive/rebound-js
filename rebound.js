@@ -527,13 +527,13 @@
       return this._endValue;
     },
 
-    // Set the current velocity of the Spring. As previously mentioned,
-    // this can be useful when you are performing a direct manipulation
-    // gesture. When a UI element is released you may call setVelocity
-    // on its animation Spring so that the Spring continues with the
-    // same velocity as the gesture ended with. The friction, tension,
-    // and displacement of the Spring will then govern its motion to
-    // return to rest on a natural feeling curve.
+    // Set the current velocity of the Spring, in pixels per second. As
+    // previously mentioned, this can be useful when you are performing
+    // a direct manipulation gesture. When a UI element is released you
+    // may call setVelocity on its animation Spring so that the Spring
+    // continues with the same velocity as the gesture ended with. The
+    // friction, tension, and displacement of the Spring will then
+    // govern its motion to return to rest on a natural feeling curve.
     setVelocity: function(velocity) {
       if (velocity === this._currentState.velocity) {
         return this;
@@ -543,7 +543,7 @@
       return this;
     },
 
-    // Get the current velocity of the Spring.
+    // Get the current velocity of the Spring, in pixels per second.
     getVelocity: function() {
       return this._currentState.velocity;
     },
