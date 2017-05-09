@@ -3,6 +3,7 @@
   "version": "0.0.12",
   "description": "A simple library for modeling spring dynamics",
   "main": "rebound.js",
+  "types": "rebound.d.ts",
   "author": "Facebook",
   "license": "BSD",
   "dependencies": {},
