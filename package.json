@@ -1,6 +1,6 @@
 {
   "name": "rebound",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "A simple library for modeling spring dynamics",
   "main": "rebound.js",
   "types": "rebound.d.ts",
