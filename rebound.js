@@ -1123,6 +1123,12 @@
   if (!_onFrame && typeof process !== 'undefined' && process.title === 'node') {
     _onFrame = setImmediate;
   }
+  
+  // one last attempt at getting it globally
+  if(typeof requestAnimationFrame !== 'undefined'){
+    _onFrame = requestAnimationFrame;
+  }
+
 
   // Cross browser/node timer functions.
   util.onFrame = function onFrame(func) {
