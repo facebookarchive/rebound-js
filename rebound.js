@@ -834,8 +834,8 @@
   var AnimationLooper = rebound.AnimationLooper = function AnimationLooper() {
     this.springSystem = null;
     var _this = this;
-    var _run = function() {
-      _this.springSystem.loop(Date.now());
+    var _run = function(timeStamp) {
+      _this.springSystem.loop(timeStamp);
     };
 
     this.run = function() {
