@@ -19,9 +19,23 @@
     "animation"
   ],
   "scripts": {
+    "build": "rollup -f umd -c ./rollup.config.js -o rebound.js",
+    "dist": "yarn build && uglifyjs --compress --mangle -o rebound.min.js rebound.js",
+    "flow": "flow",
+    "watch": "yarn build -- --watch",
     "test": "jasmine-node spec"
   },
   "devDependencies": {
-    "jasmine-node": "^1.14.5"
+    "babel-core": "6",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "0.61.0",
+    "jasmine-node": "^1.14.5",
+    "rollup": "^0.52.3",
+    "rollup-plugin-babel": "^3.0.3",
+    "uglify-js": "^3.0.27"
   }
 }
