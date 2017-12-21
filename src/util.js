@@ -20,7 +20,7 @@ export function bind(func: Function, context: Object) {
   return function() {
     func.apply(context, concat.call(args, slice.call(arguments)));
   };
-};
+}
 
 // Add all the properties in the source to the target.
 export function extend(target: Object, source: Object) {
@@ -29,12 +29,12 @@ export function extend(target: Object, source: Object) {
       target[key] = source[key];
     }
   }
-};
+}
 
 // Cross browser/node timer functions.
 export function onFrame(func: Function) {
   return _onFrame(func);
-};
+}
 
 // Lop off the first occurence of the reference in the Array.
 export function removeFirst(array: Array<any>, item: any): void {
@@ -68,12 +68,12 @@ export function hexToRGB(color: string): Color {
   var ret: Color = {
     r: parseInt(parts[0], 16),
     g: parseInt(parts[1], 16),
-    b: parseInt(parts[2], 16)
+    b: parseInt(parts[2], 16),
   };
 
   colorCache[color] = ret;
   return ret;
-};
+}
 
 export function rgbToHex(rNum: number, gNum: number, bNum: number): string {
   let r = rNum.toString(16);
@@ -83,4 +83,4 @@ export function rgbToHex(rNum: number, gNum: number, bNum: number): string {
   g = g.length < 2 ? '0' + g : g;
   b = b.length < 2 ? '0' + b : b;
   return '#' + r + g + b;
-};
+}
