@@ -22,8 +22,9 @@
     "build": "rollup -f umd -c ./rollup.config.js -o rebound.js",
     "dist": "yarn build && uglifyjs --compress --mangle -o rebound.min.js rebound.js",
     "flow": "flow",
+    "jasmine": "jasmine-node spec",
     "watch": "yarn build -- --watch",
-    "test": "jasmine-node spec"
+    "test": "yarn flow && yarn jasmine"
   },
   "devDependencies": {
     "babel-core": "6",
