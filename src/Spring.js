@@ -146,15 +146,15 @@ class Spring {
   // for onSpringEndStateChange will also be notified of this update
   // immediately.
   setEndValue(endValue: number): this {
-    if (this._endValue == endValue && this.isAtRest()) {
+    if (this._endValue === endValue && this.isAtRest()) {
       return this;
     }
     this._startValue = this.getCurrentValue();
     this._endValue = endValue;
     this._springSystem.activateSpring(this.getId());
-    for (var i = 0, len = this.listeners.length; i < len; i++) {
-      var listener = this.listeners[i];
-      var onChange = listener.onSpringEndStateChange;
+    for (let i = 0, len = this.listeners.length; i < len; i++) {
+      const listener = this.listeners[i];
+      const onChange = listener.onSpringEndStateChange;
       onChange && onChange(this);
     }
     return this;
@@ -229,8 +229,8 @@ class Spring {
   // the direction it was moving in when it started to the current
   // position and end value.
   isOvershooting(): boolean {
-    var start = this._startValue;
-    var end = this._endValue;
+    const start = this._startValue;
+    const end = this._endValue;
     return (
       this._springConfig.tension > 0 &&
       ((start < end && this.getCurrentValue() > end) ||
@@ -244,35 +244,35 @@ class Spring {
   // for the Spring based on the tension, friction, velocity, and
   // displacement of the Spring.
   advance(time: number, realDeltaTime: number): void {
-    var isAtRest = this.isAtRest();
+    let isAtRest = this.isAtRest();
 
     if (isAtRest && this._wasAtRest) {
       return;
     }
 
-    var adjustedDeltaTime = realDeltaTime;
+    let adjustedDeltaTime = realDeltaTime;
     if (realDeltaTime > Spring.MAX_DELTA_TIME_SEC) {
       adjustedDeltaTime = Spring.MAX_DELTA_TIME_SEC;
     }
 
     this._timeAccumulator += adjustedDeltaTime;
 
-    var tension = this._springConfig.tension,
-      friction = this._springConfig.friction,
-      position = this._currentState.position,
-      velocity = this._currentState.velocity,
-      tempPosition = this._tempState.position,
-      tempVelocity = this._tempState.velocity,
-      aVelocity,
-      aAcceleration,
-      bVelocity,
-      bAcceleration,
-      cVelocity,
-      cAcceleration,
-      dVelocity,
-      dAcceleration,
-      dxdt,
-      dvdt;
+    const tension = this._springConfig.tension;
+    const friction = this._springConfig.friction;
+    let position = this._currentState.position;
+    let velocity = this._currentState.velocity;
+    let tempPosition = this._tempState.position;
+    let tempVelocity = this._tempState.velocity;
+    let aVelocity;
+    let aAcceleration;
+    let bVelocity;
+    let bAcceleration;
+    let cVelocity;
+    let cAcceleration;
+    let dVelocity;
+    let dAcceleration;
+    let dxdt;
+    let dvdt;
 
     while (this._timeAccumulator >= Spring.SOLVER_TIMESTEP_SEC) {
       this._timeAccumulator -= Spring.SOLVER_TIMESTEP_SEC;
@@ -342,13 +342,13 @@ class Spring {
       isAtRest = true;
     }
 
-    var notifyActivate = false;
+    let notifyActivate = false;
     if (this._wasAtRest) {
       this._wasAtRest = false;
       notifyActivate = true;
     }
 
-    var notifyAtRest = false;
+    let notifyAtRest = false;
     if (isAtRest) {
       this._wasAtRest = true;
       notifyAtRest = true;
@@ -358,8 +358,8 @@ class Spring {
   }
 
   notifyPositionUpdated(notifyActivate: boolean, notifyAtRest: boolean): void {
-    for (var i = 0, len = this.listeners.length; i < len; i++) {
-      var listener = this.listeners[i];
+    for (let i = 0, len = this.listeners.length; i < len; i++) {
+      const listener = this.listeners[i];
       if (notifyActivate && listener.onSpringActivate) {
         listener.onSpringActivate(this);
       }

@@ -14,7 +14,7 @@ import type SpringSystem from './SpringSystem';
 
 export type Looper = {
   springSystem: ?SpringSystem,
-  run: Function,
+  run: () => mixed,
 };
 
 export type SpringListener = {

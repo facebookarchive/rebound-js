@@ -26,9 +26,9 @@ export function mapValueInRange(
   toLow: number,
   toHigh: number,
 ): number {
-  var fromRangeSize = fromHigh - fromLow;
-  var toRangeSize = toHigh - toLow;
-  var valueScale = (value - fromLow) / fromRangeSize;
+  const fromRangeSize = fromHigh - fromLow;
+  const toRangeSize = toHigh - toLow;
+  const valueScale = (value - fromLow) / fromRangeSize;
   return toLow + valueScale * toRangeSize;
 }
 
@@ -39,21 +39,19 @@ export function interpolateColor(
   val: number,
   startColorStr: string,
   endColorStr: string,
-  fromLow: number,
-  fromHigh: number,
+  fromLow: number = 0,
+  fromHigh: number = 1,
   asRGB: string,
 ): string {
-  fromLow = fromLow === undefined ? 0 : fromLow;
-  fromHigh = fromHigh === undefined ? 1 : fromHigh;
   const startColor = util.hexToRGB(startColorStr);
   const endColor = util.hexToRGB(endColorStr);
-  var r = Math.floor(
+  const r = Math.floor(
     mapValueInRange(val, fromLow, fromHigh, startColor.r, endColor.r),
   );
-  var g = Math.floor(
+  const g = Math.floor(
     mapValueInRange(val, fromLow, fromHigh, startColor.g, endColor.g),
   );
-  var b = Math.floor(
+  const b = Math.floor(
     mapValueInRange(val, fromLow, fromHigh, startColor.b, endColor.b),
   );
   if (asRGB) {
