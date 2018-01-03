@@ -27,7 +27,7 @@ export class AnimationLooper {
       springSystem.loop(Date.now());
     });
   }
-};
+}
 
 // **SimulationLooper** resolves the SpringSystem to a resting state in a
 // tight and blocking loop. This is useful for synchronously generating
@@ -53,11 +53,11 @@ export class SimulationLooper {
     }
     this.running = true;
     while (!springSystem.getIsIdle()) {
-      springSystem.loop(this.time += this.timestep);
+      springSystem.loop((this.time += this.timestep));
     }
     this.running = false;
   }
-};
+}
 
 // **SteppingSimulationLooper** resolves the SpringSystem one step at a
 // time controlled by an outside loop. This is useful for testing and
@@ -78,9 +78,9 @@ export class SteppingSimulationLooper {
   // Perform one step toward resolving the SpringSystem.
   step(timestep: number) {
     const springSystem = getSpringSystem.call(this);
-    springSystem.loop(this.time += timestep);
-  };
-};
+    springSystem.loop((this.time += timestep));
+  }
+}
 
 function getSpringSystem(): SpringSystem {
   if (this.springSystem == null) {

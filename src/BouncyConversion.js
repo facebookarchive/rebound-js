@@ -22,7 +22,7 @@ class BouncyConversion {
   bouncyFriction: number;
   speed: number;
 
-  constructor(bounciness: number, speed: number){
+  constructor(bounciness: number, speed: number) {
     this.bounciness = bounciness;
     this.speed = speed;
 
@@ -30,7 +30,7 @@ class BouncyConversion {
     b = this.projectNormal(b, 0.0, 0.8);
     const s = this.normalize(speed / 1.7, 0, 20.0);
 
-    this.bouncyTension = this.projectNormal(s, 0.5, 200)
+    this.bouncyTension = this.projectNormal(s, 0.5, 200);
     this.bouncyFriction = this.quadraticOutInterpolation(
       b,
       this.b3Nobounce(this.bouncyTension),
@@ -40,34 +40,36 @@ class BouncyConversion {
 
   normalize(value: number, startValue: number, endValue: number): number {
     return (value - startValue) / (endValue - startValue);
-  };
+  }
 
   projectNormal(n: number, start: number, end: number): number {
-    return start + (n * (end - start));
-  };
+    return start + n * (end - start);
+  }
 
   linearInterpolation(t: number, start: number, end: number) {
     return t * end + (1.0 - t) * start;
-  };
+  }
 
   quadraticOutInterpolation(t: number, start: number, end: number): number {
-    return this.linearInterpolation(2*t - t*t, start, end);
-  };
+    return this.linearInterpolation(2 * t - t * t, start, end);
+  }
 
   b3Friction1(x: number): number {
-    return (0.0007 * Math.pow(x, 3)) -
-      (0.031 * Math.pow(x, 2)) + 0.64 * x + 1.28;
-  };
+    return 0.0007 * Math.pow(x, 3) - 0.031 * Math.pow(x, 2) + 0.64 * x + 1.28;
+  }
 
   b3Friction2(x: number): number {
-    return (0.000044 * Math.pow(x, 3)) -
-      (0.006 * Math.pow(x, 2)) + 0.36 * x + 2.;
-  };
+    return 0.000044 * Math.pow(x, 3) - 0.006 * Math.pow(x, 2) + 0.36 * x + 2;
+  }
 
   b3Friction3(x: number): number {
-    return (0.00000045 * Math.pow(x, 3)) -
-      (0.000332 * Math.pow(x, 2)) + 0.1078 * x + 5.84;
-  };
+    return (
+      0.00000045 * Math.pow(x, 3) -
+      0.000332 * Math.pow(x, 2) +
+      0.1078 * x +
+      5.84
+    );
+  }
 
   b3Nobounce(tension: number): number {
     let friction = 0;
@@ -80,6 +82,6 @@ class BouncyConversion {
     }
     return friction;
   }
-};
+}
 
 export default BouncyConversion;

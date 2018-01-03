@@ -43,7 +43,7 @@ class SpringSystem {
   setLooper(looper: Looper) {
     this.looper = looper;
     looper.springSystem = this;
-  };
+  }
 
   // Add a new spring to this SpringSystem. This Spring will now be solved for
   // during the physics iteration loop. By default the spring will use the
@@ -54,25 +54,29 @@ class SpringSystem {
     if (tension === undefined || friction === undefined) {
       springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
     } else {
-      springConfig =
-        SpringConfig.fromOrigamiTensionAndFriction(tension, friction);
+      springConfig = SpringConfig.fromOrigamiTensionAndFriction(
+        tension,
+        friction,
+      );
     }
     return this.createSpringWithConfig(springConfig);
-  };
+  }
 
   // Add a spring with a specified bounciness and speed. To replicate Origami
   // compositions based on PopAnimation patches, use this factory method to
   // create matching springs.
-  createSpringWithBouncinessAndSpeed(bounciness: number, speed: number): Spring {
+  createSpringWithBouncinessAndSpeed(
+    bounciness: number,
+    speed: number,
+  ): Spring {
     var springConfig;
     if (bounciness === undefined || speed === undefined) {
       springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
     } else {
-      springConfig =
-        SpringConfig.fromBouncinessAndSpeed(bounciness, speed);
+      springConfig = SpringConfig.fromBouncinessAndSpeed(bounciness, speed);
     }
     return this.createSpringWithConfig(springConfig);
-  };
+  }
 
   // Add a spring with the provided SpringConfig.
   createSpringWithConfig(springConfig: SpringConfig): Spring {
@@ -80,7 +84,7 @@ class SpringSystem {
     this.registerSpring(spring);
     spring.setSpringConfig(springConfig);
     return spring;
-  };
+  }
 
   // You can check if a SpringSystem is idle or active by calling
   // getIsIdle. If all of the Springs in the SpringSystem are at rest,
@@ -88,14 +92,14 @@ class SpringSystem {
   // method will return true.
   getIsIdle(): boolean {
     return this._isIdle;
-  };
+  }
 
   // Retrieve a specific Spring from the SpringSystem by id. This
   // can be useful for inspecting the state of a spring before
   // or after an integration loop in the SpringSystem executes.
   getSpringById(id: string): Spring {
     return this._springRegistry[id];
-  };
+  }
 
   // Get a listing of all the springs registered with this
   // SpringSystem.
@@ -107,7 +111,7 @@ class SpringSystem {
       }
     }
     return vals;
-  };
+  }
 
   // registerSpring is called automatically as soon as you create
   // a Spring with SpringSystem#createSpring. This method sets the
@@ -115,7 +119,7 @@ class SpringSystem {
   // solver loop.
   registerSpring(spring: Spring): void {
     this._springRegistry[spring.getId()] = spring;
-  };
+  }
 
   // Deregister a spring with this SpringSystem. The SpringSystem will
   // no longer consider this Spring during its integration loop once
@@ -124,10 +128,10 @@ class SpringSystem {
   deregisterSpring(spring: Spring): void {
     removeFirst(this._activeSprings, spring);
     delete this._springRegistry[spring.getId()];
-  };
+  }
 
   advance(time: number, deltaTime: number): void {
-    while(this._idleSpringIndices.length > 0) this._idleSpringIndices.pop();
+    while (this._idleSpringIndices.length > 0) this._idleSpringIndices.pop();
     for (var i = 0, len = this._activeSprings.length; i < len; i++) {
       var spring = this._activeSprings[i];
       if (spring.systemShouldAdvance()) {
@@ -136,11 +140,11 @@ class SpringSystem {
         this._idleSpringIndices.push(this._activeSprings.indexOf(spring));
       }
     }
-    while(this._idleSpringIndices.length > 0) {
+    while (this._idleSpringIndices.length > 0) {
       var idx = this._idleSpringIndices.pop();
       idx >= 0 && this._activeSprings.splice(idx, 1);
     }
-  };
+  }
 
   // This is our main solver loop called to move the simulation
   // forward through time. Before each pass in the solver loop
@@ -158,12 +162,13 @@ class SpringSystem {
   loop(currentTimeMillis: number): void {
     var listener;
     if (this._lastTimeMillis === -1) {
-      this._lastTimeMillis = currentTimeMillis -1;
+      this._lastTimeMillis = currentTimeMillis - 1;
     }
     var ellapsedMillis = currentTimeMillis - this._lastTimeMillis;
     this._lastTimeMillis = currentTimeMillis;
 
-    var i = 0, len = this.listeners.length;
+    var i = 0,
+      len = this.listeners.length;
     for (i = 0; i < len; i++) {
       listener = this.listeners[i];
       listener.onBeforeIntegrate && listener.onBeforeIntegrate(this);
@@ -183,7 +188,7 @@ class SpringSystem {
     if (!this._isIdle) {
       this.looper.run();
     }
-  };
+  }
 
   // activateSpring is used to notify the SpringSystem that a Spring
   // has become displaced. The system responds by starting its solver
@@ -197,19 +202,19 @@ class SpringSystem {
       this._isIdle = false;
       this.looper.run();
     }
-  };
+  }
 
   // Add a listener to the SpringSystem so that you can receive
   // before/after integration notifications allowing Springs to be
   // constrained or adjusted.
   addListener(listener: SpringSystemListener): void {
     this.listeners.push(listener);
-  };
+  }
 
   // Remove a previously added listener on the SpringSystem.
   removeListener(listener: SpringSystemListener): void {
     removeFirst(this.listeners, listener);
-  };
+  }
 
   // Remove all previously added listeners on the SpringSystem.
   removeAllListeners(): void {

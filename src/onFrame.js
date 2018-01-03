@@ -11,7 +11,8 @@
 
 var _onFrame;
 if (typeof window !== 'undefined') {
-  _onFrame = window.requestAnimationFrame ||
+  _onFrame =
+    window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     window.msRequestAnimationFrame ||
@@ -22,8 +23,10 @@ if (!_onFrame && typeof process !== 'undefined' && process.title === 'node') {
   _onFrame = setImmediate;
 }
 
-_onFrame = _onFrame || function(callback: Function) {
-  window.setTimeout(callback, 1000 / 60);
-};
+_onFrame =
+  _onFrame ||
+  function(callback: Function) {
+    window.setTimeout(callback, 1000 / 60);
+  };
 
 export default _onFrame;

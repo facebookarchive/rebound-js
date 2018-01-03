@@ -19,41 +19,54 @@ import * as util from './util';
 // position of the `Spring` just needs to be run through this method
 // taking its input range in the _from_ parameters with the property
 // animation range in the _to_ parameters.
-export function mapValueInRange(value: number, fromLow: number, fromHigh: number, toLow: number, toHigh: number): number {
+export function mapValueInRange(
+  value: number,
+  fromLow: number,
+  fromHigh: number,
+  toLow: number,
+  toHigh: number,
+): number {
   var fromRangeSize = fromHigh - fromLow;
   var toRangeSize = toHigh - toLow;
   var valueScale = (value - fromLow) / fromRangeSize;
-  return toLow + (valueScale * toRangeSize);
-};
+  return toLow + valueScale * toRangeSize;
+}
 
 // Interpolate two hex colors in a 0 - 1 range or optionally provide a
 // custom range with fromLow,fromHight. The output will be in hex by default
 // unless asRGB is true in which case it will be returned as an rgb string.
-export function interpolateColor(val: number, startColorStr: string, endColorStr: string, fromLow: number, fromHigh: number, asRGB: string): string {
+export function interpolateColor(
+  val: number,
+  startColorStr: string,
+  endColorStr: string,
+  fromLow: number,
+  fromHigh: number,
+  asRGB: string,
+): string {
   fromLow = fromLow === undefined ? 0 : fromLow;
   fromHigh = fromHigh === undefined ? 1 : fromHigh;
   const startColor = util.hexToRGB(startColorStr);
   const endColor = util.hexToRGB(endColorStr);
   var r = Math.floor(
-    mapValueInRange(val, fromLow, fromHigh, startColor.r, endColor.r)
+    mapValueInRange(val, fromLow, fromHigh, startColor.r, endColor.r),
   );
   var g = Math.floor(
-    mapValueInRange(val, fromLow, fromHigh, startColor.g, endColor.g)
+    mapValueInRange(val, fromLow, fromHigh, startColor.g, endColor.g),
   );
   var b = Math.floor(
-    mapValueInRange(val, fromLow, fromHigh, startColor.b, endColor.b)
+    mapValueInRange(val, fromLow, fromHigh, startColor.b, endColor.b),
   );
   if (asRGB) {
     return 'rgb(' + r + ',' + g + ',' + b + ')';
   } else {
     return util.rgbToHex(r, g, b);
   }
-};
+}
 
 export function degreesToRadians(deg: number): number {
-  return (deg * Math.PI) / 180;
-};
+  return deg * Math.PI / 180;
+}
 
-export function radiansToDegrees(rad: number): number{
-  return (rad * 180) / Math.PI;
+export function radiansToDegrees(rad: number): number {
+  return rad * 180 / Math.PI;
 }
