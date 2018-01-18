@@ -9,22 +9,27 @@
  * @flow
  */
 
+/* eslint-disable flowtype/no-weak-types */
+
 import _onFrame from './onFrame';
 
 const concat = Array.prototype.concat;
 const slice = Array.prototype.slice;
 
 // Bind a function to a context object.
-export function bind(func: Function, context: Object) {
-  var args = slice.call(arguments, 2);
-  return function() {
-    func.apply(context, concat.call(args, slice.call(arguments)));
+export function bind(
+  func: Function,
+  context: Object,
+  ...outerArgs: Array<any>
+) {
+  return function(...innerArgs: Array<any>) {
+    func.apply(context, concat.call(outerArgs, slice.call(innerArgs)));
   };
 }
 
 // Add all the properties in the source to the target.
 export function extend(target: Object, source: Object) {
-  for (var key in source) {
+  for (const key in source) {
     if (source.hasOwnProperty(key)) {
       target[key] = source[key];
     }
@@ -37,9 +42,9 @@ export function onFrame(func: Function) {
 }
 
 // Lop off the first occurence of the reference in the Array.
-export function removeFirst(array: Array<any>, item: any): void {
-  var idx = array.indexOf(item);
-  idx != -1 && array.splice(idx, 1);
+export function removeFirst<T>(array: Array<T>, item: T): void {
+  const idx = array.indexOf(item);
+  idx !== -1 && array.splice(idx, 1);
 }
 
 type Color = {
@@ -51,27 +56,33 @@ type Color = {
 // Here are a couple of function to convert colors between hex codes and RGB
 // component values. These are handy when performing color
 // tweening animations.
-var colorCache = {};
-export function hexToRGB(color: string): Color {
-  if (colorCache[color]) {
-    return colorCache[color];
+const colorCache = {};
+export function hexToRGB(colorString: string): Color {
+  if (colorCache[colorString]) {
+    return colorCache[colorString];
   }
-  color = color.replace('#', '');
-  if (color.length === 3) {
-    color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+  let normalizedColor = colorString.replace('#', '');
+  if (normalizedColor.length === 3) {
+    normalizedColor =
+      normalizedColor[0] +
+      normalizedColor[0] +
+      normalizedColor[1] +
+      normalizedColor[1] +
+      normalizedColor[2] +
+      normalizedColor[2];
   }
-  var parts = color.match(/.{2}/g);
+  const parts = normalizedColor.match(/.{2}/g);
   if (!parts || parts.length < 3) {
     throw new Error('Expected a color string of format #rrggbb');
   }
 
-  var ret: Color = {
+  const ret: Color = {
     r: parseInt(parts[0], 16),
     g: parseInt(parts[1], 16),
     b: parseInt(parts[2], 16),
   };
 
-  colorCache[color] = ret;
+  colorCache[colorString] = ret;
   return ret;
 }
 

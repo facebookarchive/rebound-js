@@ -22,7 +22,7 @@ import {removeFirst} from './util';
 // timing loop. To get started with a Rebound animation you first
 // create a new SpringSystem and then add springs to it.
 class SpringSystem {
-  _springRegistry: Object = {};
+  _springRegistry: {[id: string]: Spring} = {};
   _activeSprings: Array<Spring> = [];
   listeners: Array<SpringSystemListener> = [];
   _idleSpringIndices: Array<number> = [];
@@ -50,7 +50,7 @@ class SpringSystem {
   // default Origami spring config with 40 tension and 7 friction, but you can
   // also provide your own values here.
   createSpring(tension: number, friction: number): Spring {
-    var springConfig;
+    let springConfig;
     if (tension === undefined || friction === undefined) {
       springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
     } else {
@@ -69,7 +69,7 @@ class SpringSystem {
     bounciness: number,
     speed: number,
   ): Spring {
-    var springConfig;
+    let springConfig;
     if (bounciness === undefined || speed === undefined) {
       springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
     } else {
@@ -80,7 +80,7 @@ class SpringSystem {
 
   // Add a spring with the provided SpringConfig.
   createSpringWithConfig(springConfig: SpringConfig): Spring {
-    var spring = new Spring(this);
+    const spring = new Spring(this);
     this.registerSpring(spring);
     spring.setSpringConfig(springConfig);
     return spring;
@@ -104,8 +104,8 @@ class SpringSystem {
   // Get a listing of all the springs registered with this
   // SpringSystem.
   getAllSprings(): Array<Spring> {
-    var vals = [];
-    for (var id in this._springRegistry) {
+    const vals = [];
+    for (const id in this._springRegistry) {
       if (this._springRegistry.hasOwnProperty(id)) {
         vals.push(this._springRegistry[id]);
       }
@@ -131,9 +131,11 @@ class SpringSystem {
   }
 
   advance(time: number, deltaTime: number): void {
-    while (this._idleSpringIndices.length > 0) this._idleSpringIndices.pop();
-    for (var i = 0, len = this._activeSprings.length; i < len; i++) {
-      var spring = this._activeSprings[i];
+    while (this._idleSpringIndices.length > 0) {
+      this._idleSpringIndices.pop();
+    }
+    for (let i = 0, len = this._activeSprings.length; i < len; i++) {
+      const spring = this._activeSprings[i];
       if (spring.systemShouldAdvance()) {
         spring.advance(time / 1000.0, deltaTime / 1000.0);
       } else {
@@ -141,7 +143,7 @@ class SpringSystem {
       }
     }
     while (this._idleSpringIndices.length > 0) {
-      var idx = this._idleSpringIndices.pop();
+      const idx = this._idleSpringIndices.pop();
       idx >= 0 && this._activeSprings.splice(idx, 1);
     }
   }
@@ -160,15 +162,15 @@ class SpringSystem {
   // integration constraints or adjustments on the Springs in the
   // SpringSystem.
   loop(currentTimeMillis: number): void {
-    var listener;
+    let listener;
     if (this._lastTimeMillis === -1) {
       this._lastTimeMillis = currentTimeMillis - 1;
     }
-    var ellapsedMillis = currentTimeMillis - this._lastTimeMillis;
+    const ellapsedMillis = currentTimeMillis - this._lastTimeMillis;
     this._lastTimeMillis = currentTimeMillis;
 
-    var i = 0,
-      len = this.listeners.length;
+    let i = 0;
+    const len = this.listeners.length;
     for (i = 0; i < len; i++) {
       listener = this.listeners[i];
       listener.onBeforeIntegrate && listener.onBeforeIntegrate(this);
@@ -194,8 +196,8 @@ class SpringSystem {
   // has become displaced. The system responds by starting its solver
   // loop up if it is currently idle.
   activateSpring(springId: string): void {
-    var spring = this._springRegistry[springId];
-    if (this._activeSprings.indexOf(spring) == -1) {
+    const spring = this._springRegistry[springId];
+    if (this._activeSprings.indexOf(spring) === -1) {
       this._activeSprings.push(spring);
     }
     if (this.getIsIdle()) {

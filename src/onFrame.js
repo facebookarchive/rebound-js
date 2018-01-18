@@ -9,7 +9,7 @@
  * @flow
  */
 
-var _onFrame;
+let _onFrame;
 if (typeof window !== 'undefined') {
   _onFrame =
     window.requestAnimationFrame ||
@@ -25,7 +25,7 @@ if (!_onFrame && typeof process !== 'undefined' && process.title === 'node') {
 
 _onFrame =
   _onFrame ||
-  function(callback: Function) {
+  function(callback: () => mixed) {
     window.setTimeout(callback, 1000 / 60);
   };
 
