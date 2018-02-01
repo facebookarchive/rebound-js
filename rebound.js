@@ -1,9 +1,3 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.rebound = factory());
-}(this, (function () { 'use strict';
-
 /**
  *  Copyright (c) 2013, Facebook, Inc.
  *  All rights reserved.
@@ -11,11 +5,14 @@
  *  This source code is licensed under the BSD-style license found in the
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
  */
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.rebound = factory());
+}(this, (function () { 'use strict';
 
-var _onFrame;
+var _onFrame = void 0;
 if (typeof window !== 'undefined') {
   _onFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
 }
@@ -30,25 +27,23 @@ _onFrame = _onFrame || function (callback) {
 
 var _onFrame$1 = _onFrame;
 
-/**
- *  Copyright (c) 2013, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
+/* eslint-disable flowtype/no-weak-types */
 
 var concat = Array.prototype.concat;
 var slice = Array.prototype.slice;
 
 // Bind a function to a context object.
 function bind(func, context) {
-  var args = slice.call(arguments, 2);
+  for (var _len = arguments.length, outerArgs = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    outerArgs[_key - 2] = arguments[_key];
+  }
+
   return function () {
-    func.apply(context, concat.call(args, slice.call(arguments)));
+    for (var _len2 = arguments.length, innerArgs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      innerArgs[_key2] = arguments[_key2];
+    }
+
+    func.apply(context, concat.call(outerArgs, slice.call(innerArgs)));
   };
 }
 
@@ -69,22 +64,22 @@ function onFrame(func) {
 // Lop off the first occurence of the reference in the Array.
 function removeFirst(array, item) {
   var idx = array.indexOf(item);
-  idx != -1 && array.splice(idx, 1);
+  idx !== -1 && array.splice(idx, 1);
 }
 
 // Here are a couple of function to convert colors between hex codes and RGB
 // component values. These are handy when performing color
 // tweening animations.
 var colorCache = {};
-function hexToRGB(color) {
-  if (colorCache[color]) {
-    return colorCache[color];
+function hexToRGB(colorString) {
+  if (colorCache[colorString]) {
+    return colorCache[colorString];
   }
-  color = color.replace('#', '');
-  if (color.length === 3) {
-    color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+  var normalizedColor = colorString.replace('#', '');
+  if (normalizedColor.length === 3) {
+    normalizedColor = normalizedColor[0] + normalizedColor[0] + normalizedColor[1] + normalizedColor[1] + normalizedColor[2] + normalizedColor[2];
   }
-  var parts = color.match(/.{2}/g);
+  var parts = normalizedColor.match(/.{2}/g);
   if (!parts || parts.length < 3) {
     throw new Error('Expected a color string of format #rrggbb');
   }
@@ -95,7 +90,7 @@ function hexToRGB(color) {
     b: parseInt(parts[2], 16)
   };
 
-  colorCache[color] = ret;
+  colorCache[colorString] = ret;
   return ret;
 }
 
@@ -118,17 +113,6 @@ var util = Object.freeze({
 	rgbToHex: rgbToHex
 });
 
-/**
- *  Copyright (c) 2013, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
 // This helper function does a linear interpolation of a value from
 // one range to another. This can be very useful for converting the
 // motion of a Spring to a range of UI property values. For example a
@@ -147,9 +131,11 @@ function mapValueInRange(value, fromLow, fromHigh, toLow, toHigh) {
 // Interpolate two hex colors in a 0 - 1 range or optionally provide a
 // custom range with fromLow,fromHight. The output will be in hex by default
 // unless asRGB is true in which case it will be returned as an rgb string.
-function interpolateColor(val, startColorStr, endColorStr, fromLow, fromHigh, asRGB) {
-  fromLow = fromLow === undefined ? 0 : fromLow;
-  fromHigh = fromHigh === undefined ? 1 : fromHigh;
+function interpolateColor(val, startColorStr, endColorStr) {
+  var fromLow = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+  var fromHigh = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
+  var asRGB = arguments[5];
+
   var startColor = hexToRGB(startColorStr);
   var endColor = hexToRGB(endColorStr);
   var r = Math.floor(mapValueInRange(val, fromLow, fromHigh, startColor.r, endColor.r));
@@ -176,17 +162,6 @@ var MathUtil = Object.freeze({
 	degreesToRadians: degreesToRadians,
 	radiansToDegrees: radiansToDegrees
 });
-
-/**
- *  Copyright (c) 2013, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
 
 // Math for converting from
 // [Origami](http://facebook.github.io/origami/) to
@@ -353,17 +328,6 @@ var Loopers = Object.freeze({
 	SteppingSimulationLooper: SteppingSimulationLooper
 });
 
-/**
- *  Copyright (c) 2013, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
 // BouncyConversion provides math for converting from Origami PopAnimation
 // config values to regular Origami tension and friction values. If you are
 // trying to replicate prototypes made with PopAnimation patches in Origami,
@@ -407,7 +371,7 @@ var BouncyConversion = function () {
   };
 
   BouncyConversion.prototype.b3Friction2 = function b3Friction2(x) {
-    return 0.000044 * Math.pow(x, 3) - 0.006 * Math.pow(x, 2) + 0.36 * x + 2.;
+    return 0.000044 * Math.pow(x, 3) - 0.006 * Math.pow(x, 2) + 0.36 * x + 2;
   };
 
   BouncyConversion.prototype.b3Friction3 = function b3Friction3(x) {
@@ -429,17 +393,6 @@ var BouncyConversion = function () {
   return BouncyConversion;
 }();
 
-/**
- *  Copyright (c) 2013, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
 // SpringConfig
 // ------------
 // **SpringConfig** maintains a set of tension and friction constants
@@ -460,6 +413,8 @@ var SpringConfig = function () {
   // Convert an origami PopAnimation Spring bounciness and speed to Rebound
   // spring constants. If you are using PopAnimation patches in Origami, this
   // utility will provide springs that match your prototype.
+
+
   SpringConfig.fromBouncinessAndSpeed = function fromBouncinessAndSpeed(bounciness, speed) {
     var bouncyConversion = new BouncyConversion(bounciness, speed);
     return SpringConfig.fromOrigamiTensionAndFriction(bouncyConversion.bouncyTension, bouncyConversion.bouncyFriction);
@@ -467,6 +422,8 @@ var SpringConfig = function () {
 
   // Create a SpringConfig with no tension or a coasting spring with some
   // amount of Friction so that it does not coast infininitely.
+
+
   SpringConfig.coastingConfigWithOrigamiFriction = function coastingConfigWithOrigamiFriction(friction) {
     return new SpringConfig(0, frictionFromOrigamiValue(friction));
   };
@@ -482,17 +439,6 @@ var SpringConfig = function () {
 }();
 
 SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
-
-/**
- *  Copyright (c) 2013, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
 
 // PhysicsState
 // ------------
@@ -550,6 +496,8 @@ var Spring = function () {
 
   // Get the id of the spring, which can be used to retrieve it from
   // the SpringSystems it participates in later.
+
+
   Spring.prototype.getId = function getId() {
     return this._id;
   };
@@ -557,12 +505,16 @@ var Spring = function () {
   // Set the configuration values for this Spring. A SpringConfig
   // contains the tension and friction values used to solve for the
   // equilibrium of the Spring in the physics loop.
+
+
   Spring.prototype.setSpringConfig = function setSpringConfig(springConfig) {
     this._springConfig = springConfig;
     return this;
   };
 
   // Retrieve the SpringConfig used by this Spring.
+
+
   Spring.prototype.getSpringConfig = function getSpringConfig() {
     return this._springConfig;
   };
@@ -594,6 +546,8 @@ var Spring = function () {
   // position taking into account existing velocity. The codepaths for
   // synchronous movement and spring driven animation can
   // be unified using this technique.
+
+
   Spring.prototype.setCurrentValue = function setCurrentValue(currentValue, skipSetAtRest) {
     this._startValue = currentValue;
     this._currentState.position = currentValue;
@@ -607,17 +561,23 @@ var Spring = function () {
   // Get the position that the most recent animation started at. This
   // can be useful for determining the number off oscillations that
   // have occurred.
+
+
   Spring.prototype.getStartValue = function getStartValue() {
     return this._startValue;
   };
 
   // Retrieve the current value of the Spring.
+
+
   Spring.prototype.getCurrentValue = function getCurrentValue() {
     return this._currentState.position;
   };
 
   // Get the absolute distance of the Spring from it's resting endValue
   // position.
+
+
   Spring.prototype.getCurrentDisplacementDistance = function getCurrentDisplacementDistance() {
     return this.getDisplacementDistanceForState(this._currentState);
   };
@@ -632,8 +592,10 @@ var Spring = function () {
   // the Spring to equilibrium. Any listeners that are registered
   // for onSpringEndStateChange will also be notified of this update
   // immediately.
+
+
   Spring.prototype.setEndValue = function setEndValue(endValue) {
-    if (this._endValue == endValue && this.isAtRest()) {
+    if (this._endValue === endValue && this.isAtRest()) {
       return this;
     }
     this._startValue = this.getCurrentValue();
@@ -648,6 +610,8 @@ var Spring = function () {
   };
 
   // Retrieve the endValue or resting position of this spring.
+
+
   Spring.prototype.getEndValue = function getEndValue() {
     return this._endValue;
   };
@@ -659,6 +623,8 @@ var Spring = function () {
   // continues with the same velocity as the gesture ended with. The
   // friction, tension, and displacement of the Spring will then
   // govern its motion to return to rest on a natural feeling curve.
+
+
   Spring.prototype.setVelocity = function setVelocity(velocity) {
     if (velocity === this._currentState.velocity) {
       return this;
@@ -669,18 +635,24 @@ var Spring = function () {
   };
 
   // Get the current velocity of the Spring, in pixels per second.
+
+
   Spring.prototype.getVelocity = function getVelocity() {
     return this._currentState.velocity;
   };
 
   // Set a threshold value for the movement speed of the Spring below
   // which it will be considered to be not moving or resting.
+
+
   Spring.prototype.setRestSpeedThreshold = function setRestSpeedThreshold(restSpeedThreshold) {
     this._restSpeedThreshold = restSpeedThreshold;
     return this;
   };
 
   // Retrieve the rest speed threshold for this Spring.
+
+
   Spring.prototype.getRestSpeedThreshold = function getRestSpeedThreshold() {
     return this._restSpeedThreshold;
   };
@@ -688,11 +660,15 @@ var Spring = function () {
   // Set a threshold value for displacement below which the Spring
   // will be considered to be not displaced i.e. at its resting
   // `endValue`.
+
+
   Spring.prototype.setRestDisplacementThreshold = function setRestDisplacementThreshold(displacementFromRestThreshold) {
     this._displacementFromRestThreshold = displacementFromRestThreshold;
   };
 
   // Retrieve the rest displacement threshold for this spring.
+
+
   Spring.prototype.getRestDisplacementThreshold = function getRestDisplacementThreshold() {
     return this._displacementFromRestThreshold;
   };
@@ -702,12 +678,16 @@ var Spring = function () {
   // any existing momentum it may have. This can be useful for certain
   // types of animations that should not oscillate such as a scale
   // down to 0 or alpha fade.
+
+
   Spring.prototype.setOvershootClampingEnabled = function setOvershootClampingEnabled(enabled) {
     this._overshootClampingEnabled = enabled;
     return this;
   };
 
   // Check if overshoot clamping is enabled for this spring.
+
+
   Spring.prototype.isOvershootClampingEnabled = function isOvershootClampingEnabled() {
     return this._overshootClampingEnabled;
   };
@@ -715,6 +695,8 @@ var Spring = function () {
   // Check if the Spring has gone past its end point by comparing
   // the direction it was moving in when it started to the current
   // position and end value.
+
+
   Spring.prototype.isOvershooting = function isOvershooting() {
     var start = this._startValue;
     var end = this._endValue;
@@ -726,6 +708,8 @@ var Spring = function () {
   // an RK4 integration to get the new position and velocity state
   // for the Spring based on the tension, friction, velocity, and
   // displacement of the Spring.
+
+
   Spring.prototype.advance = function advance(time, realDeltaTime) {
     var isAtRest = this.isAtRest();
 
@@ -740,25 +724,24 @@ var Spring = function () {
 
     this._timeAccumulator += adjustedDeltaTime;
 
-    var tension = this._springConfig.tension,
-        friction = this._springConfig.friction,
-        position = this._currentState.position,
-        velocity = this._currentState.velocity,
-        tempPosition = this._tempState.position,
-        tempVelocity = this._tempState.velocity,
-        aVelocity,
-        aAcceleration,
-        bVelocity,
-        bAcceleration,
-        cVelocity,
-        cAcceleration,
-        dVelocity,
-        dAcceleration,
-        dxdt,
-        dvdt;
+    var tension = this._springConfig.tension;
+    var friction = this._springConfig.friction;
+    var position = this._currentState.position;
+    var velocity = this._currentState.velocity;
+    var tempPosition = this._tempState.position;
+    var tempVelocity = this._tempState.velocity;
+    var aVelocity = void 0;
+    var aAcceleration = void 0;
+    var bVelocity = void 0;
+    var bAcceleration = void 0;
+    var cVelocity = void 0;
+    var cAcceleration = void 0;
+    var dVelocity = void 0;
+    var dAcceleration = void 0;
+    var dxdt = void 0;
+    var dvdt = void 0;
 
     while (this._timeAccumulator >= Spring.SOLVER_TIMESTEP_SEC) {
-
       this._timeAccumulator -= Spring.SOLVER_TIMESTEP_SEC;
 
       if (this._timeAccumulator < Spring.SOLVER_TIMESTEP_SEC) {
@@ -802,7 +785,6 @@ var Spring = function () {
     }
 
     if (this.isAtRest() || this._overshootClampingEnabled && this.isOvershooting()) {
-
       if (this._springConfig.tension > 0) {
         this._startValue = this._endValue;
         this._currentState.position = this._endValue;
@@ -850,6 +832,8 @@ var Spring = function () {
   // a final frame after they reach equilibrium to ensure that the
   // currentValue is exactly the requested endValue regardless of the
   // displacement threshold.
+
+
   Spring.prototype.systemShouldAdvance = function systemShouldAdvance() {
     return !this.isAtRest() || !this.wasAtRest();
   };
@@ -864,6 +848,8 @@ var Spring = function () {
   // of this equivalence check. If the Spring has 0 tension, then it will
   // be considered at rest whenever its absolute velocity drops below the
   // restSpeedThreshold.
+
+
   Spring.prototype.isAtRest = function isAtRest() {
     return Math.abs(this._currentState.velocity) < this._restSpeedThreshold && (this.getDisplacementDistanceForState(this._currentState) <= this._displacementFromRestThreshold || this._springConfig.tension === 0);
   };
@@ -872,6 +858,8 @@ var Spring = function () {
   // described in the documentation for setCurrentValue, this method
   // makes it easy to do synchronous non-animated updates to ui
   // elements that are attached to springs via SpringListeners.
+
+
   Spring.prototype.setAtRest = function setAtRest() {
     this._endValue = this._currentState.position;
     this._tempState.position = this._currentState.position;
@@ -950,8 +938,10 @@ var SpringSystem = function () {
   // during the physics iteration loop. By default the spring will use the
   // default Origami spring config with 40 tension and 7 friction, but you can
   // also provide your own values here.
+
+
   SpringSystem.prototype.createSpring = function createSpring(tension, friction) {
-    var springConfig;
+    var springConfig = void 0;
     if (tension === undefined || friction === undefined) {
       springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
     } else {
@@ -963,8 +953,10 @@ var SpringSystem = function () {
   // Add a spring with a specified bounciness and speed. To replicate Origami
   // compositions based on PopAnimation patches, use this factory method to
   // create matching springs.
+
+
   SpringSystem.prototype.createSpringWithBouncinessAndSpeed = function createSpringWithBouncinessAndSpeed(bounciness, speed) {
-    var springConfig;
+    var springConfig = void 0;
     if (bounciness === undefined || speed === undefined) {
       springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
     } else {
@@ -974,6 +966,8 @@ var SpringSystem = function () {
   };
 
   // Add a spring with the provided SpringConfig.
+
+
   SpringSystem.prototype.createSpringWithConfig = function createSpringWithConfig(springConfig) {
     var spring = new Spring(this);
     this.registerSpring(spring);
@@ -985,6 +979,8 @@ var SpringSystem = function () {
   // getIsIdle. If all of the Springs in the SpringSystem are at rest,
   // i.e. the physics forces have reached equilibrium, then this
   // method will return true.
+
+
   SpringSystem.prototype.getIsIdle = function getIsIdle() {
     return this._isIdle;
   };
@@ -992,17 +988,21 @@ var SpringSystem = function () {
   // Retrieve a specific Spring from the SpringSystem by id. This
   // can be useful for inspecting the state of a spring before
   // or after an integration loop in the SpringSystem executes.
+
+
   SpringSystem.prototype.getSpringById = function getSpringById(id) {
     return this._springRegistry[id];
   };
 
   // Get a listing of all the springs registered with this
   // SpringSystem.
+
+
   SpringSystem.prototype.getAllSprings = function getAllSprings() {
     var vals = [];
-    for (var id in this._springRegistry) {
-      if (this._springRegistry.hasOwnProperty(id)) {
-        vals.push(this._springRegistry[id]);
+    for (var _id in this._springRegistry) {
+      if (this._springRegistry.hasOwnProperty(_id)) {
+        vals.push(this._springRegistry[_id]);
       }
     }
     return vals;
@@ -1012,6 +1012,8 @@ var SpringSystem = function () {
   // a Spring with SpringSystem#createSpring. This method sets the
   // spring up in the registry so that it can be solved in the
   // solver loop.
+
+
   SpringSystem.prototype.registerSpring = function registerSpring(spring) {
     this._springRegistry[spring.getId()] = spring;
   };
@@ -1020,6 +1022,8 @@ var SpringSystem = function () {
   // no longer consider this Spring during its integration loop once
   // this is called. This is normally done automatically for you when
   // you call Spring#destroy.
+
+
   SpringSystem.prototype.deregisterSpring = function deregisterSpring(spring) {
     removeFirst(this._activeSprings, spring);
     delete this._springRegistry[spring.getId()];
@@ -1028,7 +1032,8 @@ var SpringSystem = function () {
   SpringSystem.prototype.advance = function advance(time, deltaTime) {
     while (this._idleSpringIndices.length > 0) {
       this._idleSpringIndices.pop();
-    }for (var i = 0, len = this._activeSprings.length; i < len; i++) {
+    }
+    for (var i = 0, len = this._activeSprings.length; i < len; i++) {
       var spring = this._activeSprings[i];
       if (spring.systemShouldAdvance()) {
         spring.advance(time / 1000.0, deltaTime / 1000.0);
@@ -1055,16 +1060,18 @@ var SpringSystem = function () {
   // SpringSystem. This gives you an opportunity to run any post
   // integration constraints or adjustments on the Springs in the
   // SpringSystem.
+
+
   SpringSystem.prototype.loop = function loop(currentTimeMillis) {
-    var listener;
+    var listener = void 0;
     if (this._lastTimeMillis === -1) {
       this._lastTimeMillis = currentTimeMillis - 1;
     }
     var ellapsedMillis = currentTimeMillis - this._lastTimeMillis;
     this._lastTimeMillis = currentTimeMillis;
 
-    var i = 0,
-        len = this.listeners.length;
+    var i = 0;
+    var len = this.listeners.length;
     for (i = 0; i < len; i++) {
       listener = this.listeners[i];
       listener.onBeforeIntegrate && listener.onBeforeIntegrate(this);
@@ -1089,9 +1096,11 @@ var SpringSystem = function () {
   // activateSpring is used to notify the SpringSystem that a Spring
   // has become displaced. The system responds by starting its solver
   // loop up if it is currently idle.
+
+
   SpringSystem.prototype.activateSpring = function activateSpring(springId) {
     var spring = this._springRegistry[springId];
-    if (this._activeSprings.indexOf(spring) == -1) {
+    if (this._activeSprings.indexOf(spring) === -1) {
       this._activeSprings.push(spring);
     }
     if (this.getIsIdle()) {
@@ -1103,33 +1112,28 @@ var SpringSystem = function () {
   // Add a listener to the SpringSystem so that you can receive
   // before/after integration notifications allowing Springs to be
   // constrained or adjusted.
+
+
   SpringSystem.prototype.addListener = function addListener(listener) {
     this.listeners.push(listener);
   };
 
   // Remove a previously added listener on the SpringSystem.
+
+
   SpringSystem.prototype.removeListener = function removeListener(listener) {
     removeFirst(this.listeners, listener);
   };
 
   // Remove all previously added listeners on the SpringSystem.
+
+
   SpringSystem.prototype.removeAllListeners = function removeAllListeners() {
     this.listeners = [];
   };
 
   return SpringSystem;
 }();
-
-/**
- *  Copyright (c) 2013, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
 
 var index = _extends({}, Loopers, {
   OrigamiValueConverter: OrigamiValueConverter,
