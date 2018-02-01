@@ -18,10 +18,11 @@
   "scripts": {
     "build": "rollup -f umd -c ./rollup.config.js -o rebound.js",
     "dist":
-      "yarn build && uglifyjs --compress --mangle -o rebound.min.js rebound.js",
+      "yarn build && uglifyjs --compress --mangle --comments='/Copyright/' -o rebound.min.js rebound.js",
     "flow": "flow",
     "lint": "eslint src/**/*.js",
-    "prettier": "prettier --write {src,spec}/**/*.js",
+    "prettier":
+      "prettier --write {src,spec}/**/*.js package.json rollup.config.js",
     "jasmine": "jasmine-node spec",
     "watch": "yarn build -- --watch",
     "test":
@@ -40,9 +41,10 @@
     "flow-bin": "0.61.0",
     "jasmine-node": "^1.14.5",
     "prettier": "^1.9.2",
-    "rollup": "^0.52.3",
+    "rollup": "^0.55.1",
     "rollup-plugin-babel": "^3.0.3",
-    "uglify-js": "^3.0.27"
+    "rollup-plugin-strip-banner": "^0.2.0",
+    "uglify-js": "^3.3.9"
   },
   "prettier": {
     "bracketSpacing": false,
