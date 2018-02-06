@@ -14,19 +14,19 @@
   "bugs": {
     "url": "https://github.com/facebook/rebound-js/issues"
   },
-  "keywords": ["facebook", "animation"],
+  "keywords": [
+    "facebook",
+    "animation"
+  ],
   "scripts": {
-    "build": "rollup -f umd -c ./rollup.config.js -o rebound.js",
-    "dist":
-      "yarn build && uglifyjs --compress --mangle --comments='/Copyright/' -o rebound.min.js rebound.js",
+    "build": "rollup -c ./rollup.config.js",
+    "dist": "yarn build && NODE_ENV=production yarn build",
     "flow": "flow",
     "lint": "eslint src/**/*.js",
-    "prettier":
-      "prettier --write {src,spec}/**/*.js package.json rollup.config.js",
+    "prettier": "prettier --write {src,spec}/**/*.js package.json rollup.config.js",
     "jasmine": "jasmine-node spec",
     "watch": "yarn build -- --watch",
-    "test":
-      "yarn prettier --list-different && yarn lint && yarn flow && yarn jasmine"
+    "test": "yarn prettier --list-different && yarn lint && yarn flow && yarn jasmine"
   },
   "devDependencies": {
     "babel-core": "^6.22.0",
@@ -44,7 +44,7 @@
     "rollup": "^0.55.1",
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-strip-banner": "^0.2.0",
-    "uglify-js": "^3.3.9"
+    "rollup-plugin-uglify": "^3.0.0"
   },
   "prettier": {
     "bracketSpacing": false,
