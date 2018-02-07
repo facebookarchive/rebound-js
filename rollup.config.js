@@ -7,9 +7,9 @@ const shouldMinify = process.env.NODE_ENV === 'production';
 export default {
   input: 'src/index.js',
   output: {
-		name: 'rebound',
-		file: shouldMinify ? 'rebound.min.js' : 'rebound.js',
-		format: 'umd',
+    name: 'rebound',
+    file: shouldMinify ? 'rebound.min.js' : 'rebound.js',
+    format: 'umd',
     banner: `
 /**
  *  Copyright (c) 2013, Facebook, Inc.
@@ -30,12 +30,13 @@ export default {
       exclude: 'node_modules/**/*',
       sourceMap: true,
     }),
-		shouldMinify && uglify({
-			compress: true,
-			mangle: true,
-			output: {
-				comments: /Copyright/,
-			},
-		}),
+    shouldMinify &&
+      uglify({
+        compress: true,
+        mangle: true,
+        output: {
+          comments: /Copyright/,
+        },
+      }),
   ],
 };
