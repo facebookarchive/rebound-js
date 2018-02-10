@@ -1,4 +1,4 @@
-const rebound = require('../rebound');
+import rebound from '../src/index.js';
 const {
   SimulationLooper,
   SpringConfig,
