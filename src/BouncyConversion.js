@@ -9,7 +9,7 @@
  * @flow
  */
 
-/*
+/**
  * Provides math for converting from Origami PopAnimation
  * config values to regular Origami tension and friction values. If you are
  * trying to replicate prototypes made with PopAnimation patches in Origami,
