@@ -9,13 +9,15 @@
  * @flow
  */
 
-// BouncyConversion provides math for converting from Origami PopAnimation
-// config values to regular Origami tension and friction values. If you are
-// trying to replicate prototypes made with PopAnimation patches in Origami,
-// then you should create your springs with
-// SpringSystem.createSpringWithBouncinessAndSpeed, which uses this Math
-// internally to create a spring to match the provided PopAnimation
-// configuration from Origami.
+/**
+ * Provides math for converting from Origami PopAnimation
+ * config values to regular Origami tension and friction values. If you are
+ * trying to replicate prototypes made with PopAnimation patches in Origami,
+ * then you should create your springs with
+ * SpringSystem.createSpringWithBouncinessAndSpeed, which uses this Math
+ * internally to create a spring to match the provided PopAnimation
+ * configuration from Origami.
+ */
 class BouncyConversion {
   bounciness: number;
   bouncyTension: number;

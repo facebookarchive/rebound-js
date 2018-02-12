@@ -14,6 +14,7 @@
 // [Rebound](http://facebook.github.io/rebound).
 // You mostly don't need to worry about this, just use
 // SpringConfig.fromOrigamiTensionAndFriction(v, v);
+
 export function tensionFromOrigamiValue(oValue: number): number {
   return (oValue - 30.0) * 3.62 + 194.0;
 }

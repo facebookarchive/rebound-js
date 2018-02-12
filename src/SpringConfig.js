@@ -12,12 +12,13 @@
 import * as OrigamiValueConverter from './OrigamiValueConverter';
 import BouncyConversion from './BouncyConversion';
 
-// SpringConfig
-// ------------
-// **SpringConfig** maintains a set of tension and friction constants
-// for a Spring. You can use fromOrigamiTensionAndFriction to convert
-// values from the [Origami](http://facebook.github.io/origami/)
-// design tool directly to Rebound spring constants.
+/**
+ * Maintains a set of tension and friction constants
+ * for a Spring. You can use fromOrigamiTensionAndFriction to convert
+ * values from the [Origami](http://facebook.github.io/origami/)
+ * design tool directly to Rebound spring constants.
+ * @public
+ */
 class SpringConfig {
   friction: number;
   tension: number;
@@ -27,10 +28,13 @@ class SpringConfig {
     7,
   );
 
-  // Convert an origami Spring tension and friction to Rebound spring
-  // constants. If you are prototyping a design with Origami, this
-  // makes it easy to make your springs behave exactly the same in
-  // Rebound.
+  /**
+   * Convert an origami Spring tension and friction to Rebound spring
+   * constants. If you are prototyping a design with Origami, this
+   * makes it easy to make your springs behave exactly the same in
+   * Rebound.
+   * @public
+   */
   static fromOrigamiTensionAndFriction(
     tension: number,
     friction: number,
@@ -41,9 +45,12 @@ class SpringConfig {
     );
   }
 
-  // Convert an origami PopAnimation Spring bounciness and speed to Rebound
-  // spring constants. If you are using PopAnimation patches in Origami, this
-  // utility will provide springs that match your prototype.
+  /**
+   * Convert an origami PopAnimation Spring bounciness and speed to Rebound
+   * spring constants. If you are using PopAnimation patches in Origami, this
+   * utility will provide springs that match your prototype.
+   * @public
+   */
   static fromBouncinessAndSpeed(
     bounciness: number,
     speed: number,
@@ -55,8 +62,11 @@ class SpringConfig {
     );
   }
 
-  // Create a SpringConfig with no tension or a coasting spring with some
-  // amount of Friction so that it does not coast infininitely.
+  /**
+   * Create a SpringConfig with no tension or a coasting spring with some
+   * amount of Friction so that it does not coast infininitely.
+   * @public
+   */
   static coastingConfigWithOrigamiFriction(friction: number): SpringConfig {
     return new SpringConfig(
       0,

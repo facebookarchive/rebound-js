@@ -11,14 +11,17 @@
 
 import * as util from './util';
 
-// This helper function does a linear interpolation of a value from
-// one range to another. This can be very useful for converting the
-// motion of a Spring to a range of UI property values. For example a
-// spring moving from position 0 to 1 could be interpolated to move a
-// view from pixel 300 to 350 and scale it from 0.5 to 1. The current
-// position of the `Spring` just needs to be run through this method
-// taking its input range in the _from_ parameters with the property
-// animation range in the _to_ parameters.
+/**
+ * This helper function does a linear interpolation of a value from
+ * one range to another. This can be very useful for converting the
+ * motion of a Spring to a range of UI property values. For example a
+ * spring moving from position 0 to 1 could be interpolated to move a
+ * view from pixel 300 to 350 and scale it from 0.5 to 1. The current
+ * position of the `Spring` just needs to be run through this method
+ * taking its input range in the _from_ parameters with the property
+ * animation range in the _to_ parameters.
+ * @public
+ */
 export function mapValueInRange(
   value: number,
   fromLow: number,
@@ -32,9 +35,15 @@ export function mapValueInRange(
   return toLow + valueScale * toRangeSize;
 }
 
-// Interpolate two hex colors in a 0 - 1 range or optionally provide a
-// custom range with fromLow,fromHight. The output will be in hex by default
-// unless asRGB is true in which case it will be returned as an rgb string.
+/**
+ * Interpolate two hex colors in a 0 - 1 range or optionally provide a
+ * custom range with fromLow,fromHight. The output will be in hex by default
+ * unless asRGB is true in which case it will be returned as an rgb string.
+ *
+ * @public
+ * @param asRGB Whether to return an rgb-style string
+ * @return A string in hex color format unless asRGB is true, in which case a string in rgb format
+ */
 export function interpolateColor(
   val: number,
   startColorStr: string,
