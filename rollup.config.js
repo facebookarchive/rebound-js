@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import stripBanner from 'rollup-plugin-strip-banner';
 import uglify from 'rollup-plugin-uglify';
+import * as path from 'path';
 
 const shouldMinify = process.env.NODE_ENV === 'production';
 
@@ -8,7 +9,11 @@ export default {
   input: 'src/index.js',
   output: {
     name: 'rebound',
-    file: shouldMinify ? 'rebound.min.js' : 'rebound.js',
+    file: path.join(
+      __dirname,
+      'dist',
+      shouldMinify ? 'rebound.min.js' : 'rebound.js',
+    ),
     format: 'umd',
     banner: `
 /**

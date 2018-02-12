@@ -1,10 +1,7 @@
 docs
-browser_test
 examples
 spec
 node_modules
 .travis.yml
-bower.json
 component.json
 index.html
-rebound.min.js
