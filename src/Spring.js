@@ -152,7 +152,7 @@ class Spring {
   }
 
   /**
-   * Get the absolute distance of the Spring from it's resting endValue
+   * Get the absolute distance of the Spring from its resting endValue
    * position.
    * @public
    */
@@ -160,6 +160,9 @@ class Spring {
     return this.getDisplacementDistanceForState(this._currentState);
   }
 
+  /**
+   * Get the absolute distance of the Spring from a given state value
+   */
   getDisplacementDistanceForState(state: PhysicsState) {
     return Math.abs(this._endValue - state.position);
   }

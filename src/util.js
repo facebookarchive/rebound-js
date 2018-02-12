@@ -53,10 +53,14 @@ type Color = {
   b: number,
 };
 
-// Here are a couple of function to convert colors between hex codes and RGB
-// component values. These are handy when performing color
-// tweening animations.
 const colorCache = {};
+/**
+ * Converts a hex-formatted color string to its rgb-formatted equivalent. Handy
+ * when performing color tweening animations
+ * @public
+ * @param colorString A hex-formatted color string
+ * @return An rgb-formatted color string
+ */
 export function hexToRGB(colorString: string): Color {
   if (colorCache[colorString]) {
     return colorCache[colorString];
@@ -86,6 +90,13 @@ export function hexToRGB(colorString: string): Color {
   return ret;
 }
 
+/**
+ * Converts a rgb-formatted color string to its hex-formatted equivalent. Handy
+ * when performing color tweening animations
+ * @public
+ * @param colorString An rgb-formatted color string
+ * @return A hex-formatted color string
+ */
 export function rgbToHex(rNum: number, gNum: number, bNum: number): string {
   let r = rNum.toString(16);
   let g = gNum.toString(16);

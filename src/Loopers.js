@@ -12,11 +12,12 @@
 import type SpringSystem from './SpringSystem';
 import * as util from './util';
 
-// Loopers
-// -------
-// **AnimationLooper** plays each frame of the SpringSystem on animation
-// timing loop. This is the default type of looper for a new spring system
-// as it is the most common when developing UI.
+/**
+ * Plays each frame of the SpringSystem on animation
+ * timing loop. This is the default type of looper for a new spring system
+ * as it is the most common when developing UI.
+ * @public
+ */
 export class AnimationLooper {
   springSystem: ?SpringSystem = null;
 
@@ -29,12 +30,15 @@ export class AnimationLooper {
   }
 }
 
-// **SimulationLooper** resolves the SpringSystem to a resting state in a
-// tight and blocking loop. This is useful for synchronously generating
-// pre-recorded animations that can then be played on a timing loop later.
-// Sometimes this lead to better performance to pre-record a single spring
-// curve and use it to drive many animations; however, it can make dynamic
-// response to user input a bit trickier to implement.
+/**
+ * Resolves the SpringSystem to a resting state in a
+ * tight and blocking loop. This is useful for synchronously generating
+ * pre-recorded animations that can then be played on a timing loop later.
+ * Sometimes this lead to better performance to pre-record a single spring
+ * curve and use it to drive many animations; however, it can make dynamic
+ * response to user input a bit trickier to implement.
+ * @public
+ */
 export class SimulationLooper {
   springSystem: ?SpringSystem = null;
   timestep: number;
@@ -59,11 +63,14 @@ export class SimulationLooper {
   }
 }
 
-// **SteppingSimulationLooper** resolves the SpringSystem one step at a
-// time controlled by an outside loop. This is useful for testing and
-// verifying the behavior of a SpringSystem or if you want to control your own
-// timing loop for some reason e.g. slowing down or speeding up the
-// simulation.
+/**
+ * Resolves the SpringSystem one step at a
+ * time controlled by an outside loop. This is useful for testing and
+ * verifying the behavior of a SpringSystem or if you want to control your own
+ * timing loop for some reason e.g. slowing down or speeding up the
+ * simulation.
+ * @public
+ */
 export class SteppingSimulationLooper {
   springSystem: ?SpringSystem = null;
   timestep: number;
