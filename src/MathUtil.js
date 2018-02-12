@@ -41,7 +41,7 @@ export function mapValueInRange(
  * unless asRGB is true in which case it will be returned as an rgb string.
  *
  * @public
- * @param asRGB Return an rgb-style string
+ * @param asRGB Whether to return an rgb-style string
  * @return A string in hex color format unless asRGB is true, in which case a string in rgb format
  */
 export function interpolateColor(
