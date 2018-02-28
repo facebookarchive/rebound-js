@@ -15,7 +15,7 @@ import type {SpringListener} from './types';
 
 import PhysicsState from './PhysicsState';
 import {removeFirst} from './util';
-import Symbol_observable from 'symbol-observable';
+import SymbolObservable from 'symbol-observable';
 
 /**
  * Provides a model of a classical spring acting to
@@ -510,7 +510,7 @@ class Spring {
   }
 
   // $FlowFixMe
-  [Symbol_observable] = () => {
+  [SymbolObservable] = () => {
     return {
       subscribe: observer => {
         const listener = {
@@ -528,7 +528,7 @@ class Spring {
 
         return () => this.removeListener(listener);
       },
-      [Symbol_observable]() {
+      [SymbolObservable]() {
         return this;
       },
     };
