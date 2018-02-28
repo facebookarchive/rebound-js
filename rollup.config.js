@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import stripBanner from 'rollup-plugin-strip-banner';
 import uglify from 'rollup-plugin-uglify';
+import resolve from 'rollup-plugin-node-resolve';
 import * as path from 'path';
 
 const shouldMinify = process.env.NODE_ENV === 'production';
@@ -27,6 +28,7 @@ export default {
       `.trim(),
   },
   plugins: [
+    resolve(),
     babel({
       plugins: ['external-helpers'],
       exclude: 'node_modules/**',
