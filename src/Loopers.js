@@ -10,7 +10,7 @@
  */
 
 import type SpringSystem from './SpringSystem';
-import * as util from './util';
+import {onFrame, performanceNow} from './util';
 
 /**
  * Plays each frame of the SpringSystem on animation
@@ -24,8 +24,8 @@ export class AnimationLooper {
   run() {
     const springSystem = getSpringSystem.call(this);
 
-    util.onFrame(() => {
-      springSystem.loop(Date.now());
+    onFrame(() => {
+      springSystem.loop(performanceNow());
     });
   }
 }
