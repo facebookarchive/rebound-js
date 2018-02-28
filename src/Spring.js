@@ -513,16 +513,14 @@ class Spring {
   [SymbolObservable] = () => {
     return {
       subscribe: observer => {
+        function notify(spring) {
+          observer.next(spring.getCurrentValue());
+        }
+
         const listener = {
-          onSpringActivate(spring) {
-            observer.next(spring.getCurrentValue());
-          },
-          onSpringUpdate(spring) {
-            observer.next(spring.getCurrentValue());
-          },
-          onSpringAtRest(spring) {
-            observer.next(spring.getCurrentValue());
-          },
+          onSpringActivate: notify,
+          onSpringUpdate: notify,
+          onSpringAtRest: notify,
         };
         this.addListener(listener);
 
