@@ -26,7 +26,7 @@
     "prettier": "prettier --write {src,spec}/**/*.js package.json rollup.config.js",
     "jest": "jest",
     "watch": "yarn build -- --watch",
-    "test": "yarn prettier --list-different && yarn lint && yarn flow && yarn jest"
+    "test": "yarn lint && yarn flow && yarn jest"
   },
   "devDependencies": {
     "babel-core": "^6.22.0",
