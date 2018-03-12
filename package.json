@@ -14,14 +14,17 @@
   "bugs": {
     "url": "https://github.com/facebook/rebound-js/issues"
   },
-  "keywords": ["facebook", "animation"],
+  "keywords": [
+    "facebook",
+    "animation"
+  ],
   "scripts": {
     "build": "rollup -c ./rollup.config.js",
+    "build-examples": "rollup -c ./examples.rollup.config.js",
     "dist": "yarn build && NODE_ENV=production yarn build",
     "flow": "flow",
-    "lint": "eslint src/**/*.js",
-    "prettier":
-      "prettier --write {src,spec}/**/*.js package.json rollup.config.js",
+    "lint": "eslint src/**/*.js examples/src/**/*.js",
+    "prettier": "prettier --write {src,spec}/**/*.js package.json rollup.config.js",
     "jest": "jest",
     "watch": "yarn build -- --watch",
     "bundlesize": "NODE_ENV=production yarn build && bundlesize",
@@ -42,7 +45,7 @@
     "flow-bin": "0.66.0",
     "jest": "^22.2.2",
     "prettier": "^1.9.2",
-    "rollup": "^0.55.4",
+    "rollup": "^0.56.3",
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-strip-banner": "^0.2.0",
     "rollup-plugin-uglify": "^3.0.0"
