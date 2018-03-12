@@ -41,6 +41,12 @@ export function onFrame(func: Function) {
   return _onFrame(func);
 }
 
+const start = Date.now();
+export const performanceNow =
+  typeof performance === 'object' && typeof performance.now === 'function'
+    ? () => performance.now()
+    : () => Date.now() - start;
+
 // Lop off the first occurence of the reference in the Array.
 export function removeFirst<T>(array: Array<T>, item: T): void {
   const idx = array.indexOf(item);
