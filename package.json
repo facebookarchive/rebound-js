@@ -6,7 +6,9 @@
   "types": "rebound.d.ts",
   "author": "Facebook",
   "license": "BSD",
-  "dependencies": {},
+  "dependencies": {
+    "symbol-observable": "^1.2.0"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:facebook/rebound-js.git"
@@ -47,8 +49,10 @@
     "prettier": "^1.9.2",
     "rollup": "^0.56.3",
     "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-node-resolve": "^3.0.3",
     "rollup-plugin-strip-banner": "^0.2.0",
-    "rollup-plugin-uglify": "^3.0.0"
+    "rollup-plugin-uglify": "^3.0.0",
+    "rxjs": "^5.5.6"
   },
   "prettier": {
     "bracketSpacing": false,

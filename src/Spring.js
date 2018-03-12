@@ -15,6 +15,7 @@ import type {SpringListener} from './types';
 
 import PhysicsState from './PhysicsState';
 import {removeFirst} from './util';
+import SymbolObservable from 'symbol-observable';
 
 /**
  * Provides a model of a classical spring acting to
@@ -507,6 +508,29 @@ class Spring {
     removeFirst(this.listeners, listenerToRemove);
     return this;
   }
+
+  // $FlowFixMe
+  [SymbolObservable] = () => {
+    return {
+      subscribe: observer => {
+        function notify(spring) {
+          observer.next(spring.getCurrentValue());
+        }
+
+        const listener = {
+          onSpringActivate: notify,
+          onSpringUpdate: notify,
+          onSpringAtRest: notify,
+        };
+        this.addListener(listener);
+
+        return () => this.removeListener(listener);
+      },
+      [SymbolObservable]() {
+        return this;
+      },
+    };
+  };
 
   removeAllListeners(): this {
     this.listeners = [];

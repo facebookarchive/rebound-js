@@ -1,3 +1,4 @@
+import {Observable} from 'rxjs';
 import rebound from '../src/index.js';
 const {
   SimulationLooper,
@@ -180,6 +181,28 @@ describe('Spring', () => {
     expect(_spring.isAtRest()).toBe(false);
     expect(_spring.getCurrentValue()).toBe(-1);
     expect(_spring.getEndValue()).toBe(1);
+  });
+
+  it('should be castable to and used as an Observable', () => {
+    const actualValues = [];
+    const actualVelocities = [];
+
+    jest.spyOn(spring, 'addListener');
+    jest.spyOn(spring, 'removeListener');
+
+    const subscription = Observable.from(spring).subscribe(() => {
+      actualValues.push(spring.getCurrentValue());
+      actualVelocities.push(spring.getVelocity());
+    });
+
+    spring.setEndValue(1);
+    expect(actualValues).toMatchSnapshot();
+    expect(actualVelocities).toMatchSnapshot();
+
+    expect(spring.addListener).toHaveBeenCalled();
+    expect(spring.removeListener).not.toHaveBeenCalled();
+    subscription.unsubscribe();
+    expect(spring.removeListener).toHaveBeenCalled();
   });
 });
 
