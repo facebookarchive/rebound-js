@@ -13,20 +13,6 @@
 
 import _onFrame from './onFrame';
 
-const concat = Array.prototype.concat;
-const slice = Array.prototype.slice;
-
-// Bind a function to a context object.
-export function bind(
-  func: Function,
-  context: Object,
-  ...outerArgs: Array<any>
-) {
-  return function(...innerArgs: Array<any>) {
-    func.apply(context, concat.call(outerArgs, slice.call(innerArgs)));
-  };
-}
-
 // Add all the properties in the source to the target.
 export function extend(target: Object, source: Object) {
   for (const key in source) {

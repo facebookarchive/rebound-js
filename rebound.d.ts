@@ -184,7 +184,6 @@ export type RGB = {
 export type RequestAnimationFrame = typeof requestAnimationFrame;
 
 export namespace util {
-  function bind(func: Function, context: any): Function;
   function extend<T, U>(target: T, source: U): T&U;
 
   function hexToRGB(color: string): RGB;
