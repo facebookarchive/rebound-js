@@ -81,7 +81,7 @@ class Spring {
    * equilibrium of the Spring in the physics loop.
    * @public
    */
-  setSpringConfig(springConfig: SpringConfig) {
+  setSpringConfig(springConfig: SpringConfig): this {
     this._springConfig = springConfig;
     return this;
   }
@@ -124,7 +124,7 @@ class Spring {
    * be unified using this technique.
    * @public
    */
-  setCurrentValue(currentValue: number, skipSetAtRest: boolean) {
+  setCurrentValue(currentValue: number, skipSetAtRest: boolean): this {
     this._startValue = currentValue;
     this._currentState.position = currentValue;
     if (!skipSetAtRest) {
@@ -251,8 +251,9 @@ class Spring {
    * `endValue`.
    * @public
    */
-  setRestDisplacementThreshold(displacementFromRestThreshold: number): void {
+  setRestDisplacementThreshold(displacementFromRestThreshold: number): this {
     this._displacementFromRestThreshold = displacementFromRestThreshold;
+    return this;
   }
 
   /**
