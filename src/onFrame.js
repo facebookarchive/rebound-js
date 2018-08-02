@@ -19,7 +19,7 @@ if (typeof window !== 'undefined') {
     window.oRequestAnimationFrame;
 }
 
-if (!_onFrame && typeof process !== 'undefined' && process.title === 'node') {
+if (!_onFrame && typeof process !== 'undefined' && /\bnode$/.test(process.title)) {
   _onFrame = setImmediate;
 }
 
