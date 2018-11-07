@@ -1,8 +1,5 @@
 import rebound from 'rebound';
-
-// import a couple of utils from rebound.
-const deg2rad = rebound.MathUtil.degreesToRadians;
-const mapVal = rebound.MathUtil.mapValueInRange;
+import {degreesToRadians, mapValueInRange} from '../../../src/MathUtil';
 
 // HamburgerButton animates between a 3 bar menu icon and an X icon using a
 // Rebound spring to drive the animation. You can configure its container, size
@@ -110,22 +107,22 @@ class HamburgerButton {
     let xlatX, rot, width;
     const val = this.animationSpring.getCurrentValue();
 
-    xlatX = mapVal(val, 0, 1, 0, this.rotatedXlat);
-    rot = mapVal(val, 0, 1, 0, 45);
-    width = mapVal(val, 0, 1, this.width, this.rotatedWidth);
+    xlatX = mapValueInRange(val, 0, 1, 0, this.rotatedXlat);
+    rot = mapValueInRange(val, 0, 1, 0, 45);
+    width = mapValueInRange(val, 0, 1, this.width, this.rotatedWidth);
 
     // draw top bar
     this.ctx.save();
     this.ctx.translate(xlatX, 0);
-    this.ctx.rotate(deg2rad(rot));
+    this.ctx.rotate(degreesToRadians(rot));
     this.drawBar(width);
     this.ctx.restore();
 
     // draw middle bar
     this.ctx.save();
 
-    xlatX = mapVal(val, 0, 1, 0, this.width / 2);
-    width = mapVal(val, 0, 1, this.width, 0);
+    xlatX = mapValueInRange(val, 0, 1, 0, this.width / 2);
+    width = mapValueInRange(val, 0, 1, this.width, 0);
 
     this.ctx.translate(xlatX, this.height / 2 - this.barHeight / 2);
     this.drawBar(width);
@@ -134,18 +131,18 @@ class HamburgerButton {
     // draw bottom bar
     this.ctx.save();
 
-    const xlatY = mapVal(
+    const xlatY = mapValueInRange(
       val,
       0,
       1,
       this.height - this.barHeight,
       this.height - this.rotatedXlat,
     );
-    rot = mapVal(val, 0, 1, 0, -45);
-    width = mapVal(val, 0, 1, this.width, this.rotatedWidth);
+    rot = mapValueInRange(val, 0, 1, 0, -45);
+    width = mapValueInRange(val, 0, 1, this.width, this.rotatedWidth);
 
     this.ctx.translate(0, xlatY);
-    this.ctx.rotate(deg2rad(rot));
+    this.ctx.rotate(degreesToRadians(rot));
     this.drawBar(width);
     this.ctx.restore();
 

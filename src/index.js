@@ -10,7 +10,6 @@
  */
 
 import * as util from './util';
-import * as MathUtil from './MathUtil';
 import * as OrigamiValueConverter from './OrigamiValueConverter';
 import * as Loopers from './Loopers';
 import SpringConfig from './SpringConfig';
@@ -20,12 +19,8 @@ import Spring from './Spring';
 export default {
   ...Loopers,
   OrigamiValueConverter,
-  MathUtil,
   Spring,
   SpringConfig,
   SpringSystem,
-  util: {
-    ...util,
-    ...MathUtil,
-  },
+  util,
 };

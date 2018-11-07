@@ -15,17 +15,24 @@ import * as path from 'path';
 
 const shouldMinify = process.env.NODE_ENV === 'production';
 
-export default {
-  input: 'src/index.js',
-  output: {
-    name: 'rebound',
-    file: path.join(
-      __dirname,
-      'dist',
-      shouldMinify ? 'rebound.min.js' : 'rebound.js',
-    ),
-    format: 'umd',
-    banner: `
+export default [
+  makeBundle('index', 'rebound'),
+  makeBundle('MathUtil', 'ReboundMathUtil'),
+  makeBundle('ColorUtil', 'ReboundColorUtil'),
+];
+
+function makeBundle(src, dest) {
+  return {
+    input: `src/${src}.js`,
+    output: {
+      name: dest,
+      file: path.join(
+        __dirname,
+        'dist',
+        shouldMinify ? `${dest}.min.js` : `${dest}.js`,
+      ),
+      format: 'umd',
+      banner: `
 /**
  *  Copyright (c) 2013, Facebook, Inc.
  *  All rights reserved.
@@ -35,24 +42,25 @@ export default {
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
       `.trim(),
-  },
-  plugins: [
-    resolve(),
-    babel({
-      plugins: ['external-helpers'],
-      exclude: 'node_modules/**',
-    }),
-    stripBanner({
-      exclude: 'node_modules/**/*',
-      sourceMap: true,
-    }),
-    shouldMinify &&
-      uglify({
-        compress: true,
-        mangle: true,
-        output: {
-          comments: /Copyright/,
-        },
+    },
+    plugins: [
+      resolve(),
+      babel({
+        plugins: ['external-helpers'],
+        exclude: 'node_modules/**',
       }),
-  ],
-};
+      stripBanner({
+        exclude: 'node_modules/**/*',
+        sourceMap: true,
+      }),
+      shouldMinify &&
+        uglify({
+          compress: true,
+          mangle: true,
+          output: {
+            comments: /Copyright/,
+          },
+        }),
+    ],
+  };
+}

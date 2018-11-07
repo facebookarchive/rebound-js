@@ -9,6 +9,9 @@
 
 import {Observable} from 'rxjs';
 import rebound from '../src/index.js';
+import * as ColorUtil from '../src/ColorUtil';
+import * as MathUtil from '../src/MathUtil';
+
 const {
   SimulationLooper,
   SpringConfig,
@@ -217,35 +220,35 @@ describe('Spring', () => {
 
 describe('Rebound Utilities', () => {
   it('should interpolate numbers in ranges', () => {
-    const val = rebound.util.mapValueInRange(150, 100, 200, 0, -300);
+    const val = MathUtil.mapValueInRange(150, 100, 200, 0, -300);
     expect(val).toBe(-150);
   });
 
   it('should convert degrees to radians', () => {
-    const val = rebound.util.degreesToRadians(57.29577951308232);
+    const val = MathUtil.degreesToRadians(57.29577951308232);
     expect(val).toEqual(1);
   });
 
   it('should convert radian to degrees', () => {
-    const val = rebound.util.radiansToDegrees(1);
+    const val = MathUtil.radiansToDegrees(1);
     expect(val).toBe(57.29577951308232);
   });
 
   it('should interpolate hex colors', () => {
-    expect(rebound.util.interpolateColor(0.5, '#ff0000', '#0000ff')).toBe(
+    expect(ColorUtil.interpolateColor(0.5, '#ff0000', '#0000ff')).toBe(
       '#7f007f',
     );
   });
 
   it('should interpolate hex colors with an optional input range', () => {
-    expect(
-      rebound.util.interpolateColor(100, '#ff0000', '#0000ff', 0, 200),
-    ).toBe('#7f007f');
+    expect(ColorUtil.interpolateColor(100, '#ff0000', '#0000ff', 0, 200)).toBe(
+      '#7f007f',
+    );
   });
 
   it('should interpolate hex colors with an optional rgb return value', () => {
     expect(
-      rebound.util.interpolateColor(0.5, '#ff0000', '#0000ff', 0, 1, true),
+      ColorUtil.interpolateColor(0.5, '#ff0000', '#0000ff', 0, 1, true),
     ).toBe('rgb(127,0,127)');
   });
 
