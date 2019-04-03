@@ -164,7 +164,7 @@ class SpringSystem {
     }
     for (let i = 0, len = this._activeSprings.length; i < len; i++) {
       const spring = this._activeSprings[i];
-      if (spring.systemShouldAdvance()) {
+      if (spring !== undefined && spring.systemShouldAdvance()) {
         spring.advance(time / 1000.0, deltaTime / 1000.0);
       } else {
         this._idleSpringIndices.push(this._activeSprings.indexOf(spring));
